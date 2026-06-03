@@ -2,11 +2,9 @@ backend:
   name: github
   repo: JSUCSA/jsucsa.github.io
   branch: main
-  # 需要配置 GitHub OAuth App
-  # 在 https://github.com/settings/developers 创建
-  # Callback URL: https://jsucsa.github.io/admin/
-  auth_type: pkce
-  base_url: https://jsucsa.github.io
+  # Cloudflare Worker OAuth 网关（限制登录账号）
+  base_url: https://jsucsa-cms-auth.jsucsa.workers.dev
+  auth_endpoint: auth
 
 publish_mode: editorial_workflow
 
@@ -51,10 +49,3 @@ collections:
         required: false
         min: 0
         max: 10
-      - label: "封面图"
-        name: "cover"
-        widget: "image"
-        required: false
-        media_library:
-          config:
-            max_file_size: 5120000

@@ -4,25 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JSUCSA 博客管理</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Decap CMS -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-  <script>
-    // GitHub OAuth 配置
-    // 需要在 GitHub 创建 OAuth App: https://github.com/settings/developers
-    // Callback URL: https://jsucsa.github.io/admin/
-    CMS.registerBackend({
-      name: 'github-oauth',
-      config: {
-        repo: 'JSUCSA/jsucsa.github.io',
-        branch: 'main',
-        auth_type: 'pkce',
-        app_id: 'YOUR_GITHUB_OAUTH_APP_ID', // 替换为你的 GitHub OAuth App ID
-      }
-    });
-  </script>
 </body>
 </html>
