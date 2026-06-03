@@ -1,23 +1,23 @@
 # Hexo Configuration
-## Docs: https://hexo.io/docs/configuration.html
-
-# Site
-title: JSCSA
-subtitle: '江苏大学计算机科技协会'
-description: '江苏大学计算机科技协会 — 技术分享 · 社区交流 · 共同成长'
+title: JSUCSA
+subtitle: '江苏大学计算机协会'
+description: '江苏大学计算机协会 — SRE · Agent 开发 · 网络安全 · AI'
 keywords:
-  - JSCSA
+  - JSUCSA
   - 江苏大学
-  - 计算机科技协会
-  - 技术社区
-author: JSCSA
+  - 计算机协会
+  - SRE
+  - Agent
+  - 网络安全
+  - AI
+author: JSUCSA
 language: zh-CN
 timezone: ''
 
 # URL
 url: https://jsucsa.github.io
 root: /
-permalink: :year/:month/:day/:title/
+permalink: blog/:year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
   trailing_index: true
@@ -26,13 +26,14 @@ pretty_urls:
 # Directory
 source_dir: source
 public_dir: public
-tag_dir: tags
-archive_dir: archives
-category_dir: categories
+tag_dir: blog/tags
+archive_dir: blog/archives
+category_dir: blog/categories
 code_dir: downloads/code
 i18n_dir: :lang
 skip_render:
   - '*.html'
+  - 'admin/**'
 
 # Writing
 new_post_name: :title.md
@@ -59,9 +60,9 @@ prismjs:
   line_number: true
   tab_replace: ''
 
-# Home page setting
+# Home page setting - blog at /blog/
 index_generator:
-  path: ''
+  path: blog
   per_page: 10
   order_by: -date
 
@@ -70,25 +71,19 @@ default_category: uncategorized
 category_map:
 tag_map:
 
-# Metadata elements
 meta_generator: true
-
-# Date / Time format
 date_format: YYYY-MM-DD
 time_format: HH:mm:ss
 updated_option: 'mtime'
-
-# Pagination
 per_page: 10
 pagination_dir: page
 
-# Include / Exclude file(s)
 include:
 exclude:
 ignore:
 
-# Extensions
-theme: jsucsa-theme
+# Theme
+theme: icarus
 
 # Deployment
 deploy:

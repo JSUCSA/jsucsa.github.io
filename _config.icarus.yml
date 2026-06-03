@@ -1,0 +1,69 @@
+version: 5.3.0
+
+# Site info
+site:
+  title: JSUCSA
+  subtitle: '江苏大学计算机协会技术博客'
+  description: 'SRE · Agent 开发 · 网络安全 · AI'
+  author: JSUCSA
+  language: zh-CN
+  timezone: ''
+  url: https://jsucsa.github.io/blog/
+
+# Navigation bar
+navbar:
+  menu:
+    首页: /
+    博客: /blog/
+    归档: /blog/archives/
+  links:
+    GitHub: https://github.com/JSUCSA
+    ITLab 社区: https://jsucsa.github.io/Lab-E-club/
+
+# Footer
+footer:
+  copyright: '© 2025 JSUCSA'
+  links:
+    GitHub:
+      icon: fab fa-github
+      url: https://github.com/JSUCSA
+    ITLab 社区:
+      icon: fas fa-external-link-alt
+      url: https://jsucsa.github.io/Lab-E-club/
+
+# Article
+article:
+  highlight:
+    theme: atom-one-dark
+    clipboard: true
+  toc: true
+  share: false
+
+# Search
+search:
+  type: insight
+
+# Sidebar
+sidebar:
+  position: left
+  sticky: true
+  widgets:
+    - type: profile
+      position: left
+      author: JSUCSA
+      author_title: 江苏大学计算机协会
+      location: '江苏大学'
+      avatar: https://github.com/JSUCSA.png
+      avatar_rounded: true
+      follow:
+        enable: true
+        link: https://github.com/JSUCSA
+    - type: category
+      position: left
+    - type: tagcloud
+      position: left
+    - type: recent_posts
+      position: left
+
+# Comment (disabled)
+comment:
