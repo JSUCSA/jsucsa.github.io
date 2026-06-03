@@ -12,253 +12,36 @@
       display: flex; align-items: center; justify-content: center;
       min-height: 100vh;
     }
-    .login-screen {
+    .box {
       background: #1a1f35; border: 1px solid rgba(148,163,184,0.1);
       border-radius: 20px; padding: 48px; text-align: center;
       max-width: 420px; width: 90%;
     }
-    .login-screen h1 { font-size: 1.8rem; margin-bottom: 8px; }
-    .login-screen p { color: #94a3b8; margin-bottom: 32px; font-size: 0.95rem; }
-    .login-screen .logo { font-size: 2.5rem; margin-bottom: 16px; }
+    .box .logo { font-size: 2.5rem; margin-bottom: 16px; }
+    .box h1 { font-size: 1.8rem; margin-bottom: 8px; }
+    .box p { color: #94a3b8; margin-bottom: 32px; font-size: 0.95rem; }
     .btn {
       display: inline-flex; align-items: center; gap: 10px;
       padding: 14px 32px; border-radius: 28px; font-size: 1rem;
       font-weight: 600; cursor: pointer; border: none;
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      color: white; transition: all 0.3s;
+      background: linear-gradient(135deg, #f03e2f, #f44);
+      color: white; transition: all 0.3s; text-decoration: none;
     }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(59,130,246,0.4); }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .error {
-      background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
-      border-radius: 12px; padding: 16px; margin-top: 20px;
-      color: #fca5a5; font-size: 0.9rem; display: none;
-    }
-    .loading { color: #94a3b8; margin-top: 20px; display: none; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(240,62,47,0.4); }
   </style>
 </head>
 <body>
-  <div class="login-screen" id="loginScreen">
+  <div class="box">
     <div class="logo">📝</div>
     <h1>JSUCSA 博客管理</h1>
-    <p>使用 GitHub 账号登录，仅限授权用户</p>
-    <button class="btn" id="loginBtn" onclick="doLogin()">
-      <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-      使用 GitHub 登录
-    </button>
-    <div class="loading" id="loading">⏳ 正在验证权限...</div>
-    <div class="error" id="error"></div>
+    <p>点击进入 Sanity Studio 编辑器</p>
+    <!-- 替换 YOUR_PROJECT_ID 为你的 Sanity 项目 ID -->
+    <a class="btn" href="https://jsucsa-blog.sanity.studio" target="_blank">
+      打开编辑器 →
+    </a>
+    <p style="margin-top:24px;font-size:0.8rem;color:#64748b;">
+      使用 Sanity 账号登录，仅限授权用户
+    </p>
   </div>
-
-  <!-- Firebase SDK (compat) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
-  <script>
-    // ============================================
-    // 1. Firebase 配置 — 替换为你的 Firebase 项目配置
-    // ============================================
-    const FIREBASE_CONFIG = {
-      apiKey: "YOUR_FIREBASE_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-    };
-
-    // ============================================
-    // 2. 初始化
-    // ============================================
-    firebase.initializeApp(FIREBASE_CONFIG);
-    const db = firebase.firestore();
-    const ghProvider = new firebase.auth.GithubAuthProvider();
-    ghProvider.addScope('repo');
-
-    const $ = id => document.getElementById(id);
-
-    function showError(msg) {
-      $('error').textContent = msg;
-      $('error').style.display = 'block';
-      $('loading').style.display = 'none';
-      $('loginBtn').disabled = false;
-    }
-
-    // ============================================
-    // 3. 从 Firestore 获取白名单
-    // 文档路径: config/allowed_users
-    // 字段: users (数组，GitHub 用户名小写)
-    // ============================================
-    async function getAllowedUsers() {
-      try {
-        const doc = await db.collection('config').doc('allowed_users').get();
-        if (!doc.exists) return [];
-        const data = doc.data();
-        return (data.users || []).map(u => u.toLowerCase());
-      } catch (err) {
-        console.error('读取白名单失败:', err);
-        return [];
-      }
-    }
-
-    // ============================================
-    // 4. 登录 + 白名单校验
-    // ============================================
-    async function doLogin() {
-      $('loginBtn').disabled = true;
-      $('loading').style.display = 'block';
-      $('error').style.display = 'none';
-
-      try {
-        const result = await firebase.auth().signInWithPopup(ghProvider);
-        const credential = firebase.auth.GithubAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        const username = (result.user.reloadUserInfo?.screen_name || result.user.displayName || '').toLowerCase();
-
-        // 从 Firestore 读取白名单并校验
-        const allowed = await getAllowedUsers();
-        if (!allowed.includes(username)) {
-          showError(`⛔ @${username} 没有编辑权限，联系管理员添加白名单。`);
-          await firebase.auth().signOut();
-          return;
-        }
-
-        $('loading').textContent = `✅ 欢迎 @${username}，正在加载编辑器...`;
-        localStorage.setItem('jsucsa_gh_token', token);
-        localStorage.setItem('jsucsa_gh_user', username);
-        loadCMS(token);
-
-      } catch (err) {
-        if (err.code === 'auth/popup-closed-by-user') {
-          $('loading').style.display = 'none';
-          $('loginBtn').disabled = false;
-          return;
-        }
-        showError(`登录失败: ${err.message}`);
-      }
-    }
-
-    // ============================================
-    // 5. 检查已登录状态（也从 Firestore 校验）
-    // ============================================
-    (async () => {
-      const savedToken = localStorage.getItem('jsucsa_gh_token');
-      const savedUser = localStorage.getItem('jsucsa_gh_user');
-      if (savedToken && savedUser) {
-        const allowed = await getAllowedUsers();
-        if (allowed.includes(savedUser)) {
-          $('loading').textContent = `✅ 已登录 @${savedUser}，正在加载编辑器...`;
-          $('loading').style.display = 'block';
-          $('loginBtn').style.display = 'none';
-          loadCMS(savedToken);
-        } else {
-          localStorage.removeItem('jsucsa_gh_token');
-          localStorage.removeItem('jsucsa_gh_user');
-        }
-      }
-    })();
-
-    // ============================================
-    // 6. 加载 Decap CMS + 注入自定义后端
-    // ============================================
-    function loadCMS(token) {
-      const script = document.createElement('script');
-      script.src = 'https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js';
-      script.onload = () => {
-        // 注册自定义 GitHub 后端，使用 Firebase 获取的 token
-        const backend = CMS.getBackend('github');
-        const origAuth = backend.authenticate;
-
-        // 跳过 OAuth 流程，直接使用已有 token
-        CMS.registerBackend('firebase', {
-          init(config) {
-            this.config = config;
-            this.repo = config.getIn(['backend', 'repo'], '');
-            this.branch = config.getIn(['backend', 'branch'], 'main');
-            this.apiRoot = config.getIn(['backend', 'api_root'], 'https://api.github.com');
-            this.token = token;
-            this.api = new GitHubAPI({ token, branch: this.branch, repo: this.repo, apiRoot: this.apiRoot });
-          },
-          auth() { return Promise.resolve(); },
-          restoreUser() {
-            const user = localStorage.getItem('jsucsa_gh_user') || 'unknown';
-            return Promise.resolve({ token, login: user });
-          },
-          setUser() {},
-          async getToken() { return token; },
-          async entriesByFolder(folder, extension) { return this.api.entriesByFolder(folder, extension); },
-          async entriesByFiles(files) { return this.api.entriesByFiles(files); },
-          async getEntry(path) { return this.api.readFile(path).then(content => ({ data: content, file: { path } })); },
-          async getMedia(mediaFolder) { return this.api.listFiles(mediaFolder); },
-          async persistEntry(entry, opts) { return this.api.persistEntry(entry, opts); },
-          async persistMedia(file, opts) { return this.api.persistMedia(file, opts); },
-          async deleteFiles(paths, comment) { return this.api.deleteFiles(paths, comment); },
-          async unpublishedEntries() { return this.api.listUnpublishedEntries(); },
-          async unpublishedEntry(slug) { return this.api.readUnpublishedEntry(slug); },
-          async updateUnpublishedEntryStatus(collection, slug, newStatus) { return this.api.updateUnpublishedEntryStatus(collection, slug, newStatus); },
-          async deleteUnpublishedEntry(collection, slug) { return this.api.deleteUnpublishedEntry(collection, slug); },
-          async publishUnpublishedEntry(collection, slug) { return this.api.publishUnpublishedEntry(collection, slug); },
-        });
-
-        // 启动 CMS
-        CMS.init({ config: '/admin/config.yml' });
-        CMS.registerBackend('github', CMS.getBackend('firebase'));
-      };
-      document.head.appendChild(script);
-    }
-
-    // ============================================
-    // 7. GitHub API 封装（供自定义后端使用）
-    // ============================================
-    class GitHubAPI {
-      constructor({ token, branch, repo, apiRoot }) {
-        this.token = token;
-        this.branch = branch;
-        this.repo = repo;
-        this.apiRoot = apiRoot;
-        this.repoURL = `${apiRoot}/repos/${repo}`;
-      }
-      request(path, opts = {}) {
-        const headers = { Authorization: `token ${this.token}`, 'Content-Type': 'application/json', ...opts.headers };
-        return fetch(`${this.repoURL}${path}`, { ...opts, headers }).then(r => r.json());
-      }
-      async readFile(path) {
-        const res = await this.request(`/contents/${path}?ref=${this.branch}`);
-        return atob(res.content);
-      }
-      async listFiles(dir) {
-        return this.request(`/contents/${dir}?ref=${this.branch}`);
-      }
-      async persistEntry({ slug, path, raw, collection }, { commitMessage }) {
-        // 获取文件 SHA（如果已存在）
-        let sha;
-        try { const existing = await this.request(`/contents/${path}?ref=${this.branch》); sha = existing.sha; } catch {}
-        await this.request(`/contents/${path}`, {
-          method: 'PUT',
-          body: JSON.stringify({ message: commitMessage, content: btoa(unescape(encodeURIComponent(raw))), branch: this.branch, sha }),
-        });
-      }
-      async persistMedia(file, { commitMessage }) {
-        const content = await file.arrayBuffer();
-        const base64 = btoa(String.fromCharCode(...new Uint8Array(content)));
-        await this.request(`/contents/${file.path}`, {
-          method: 'PUT',
-          body: JSON.stringify({ message: commitMessage, content: base64, branch: this.branch }),
-        });
-      }
-      async deleteFiles(paths, comment) {
-        for (const path of paths) {
-          const { sha } = await this.request(`/contents/${path}?ref=${this.branch}`);
-          await this.request(`/contents/${path}`, {
-            method: 'DELETE',
-            body: JSON.stringify({ message: comment, sha, branch: this.branch }),
-          });
-        }
-      }
-      async listUnpublishedEntries() { return []; }
-      async readUnpublishedEntry() { return null; }
-      async updateUnpublishedEntryStatus() {}
-      async deleteUnpublishedEntry() {}
-      async publishUnpublishedEntry() {}
-    }
-  </script>
 </body>
 </html>
