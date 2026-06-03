@@ -2,10 +2,6 @@ backend:
   name: github
   repo: JSUCSA/jsucsa.github.io
   branch: main
-  # Cloudflare Worker OAuth 网关（限制登录账号）
-  base_url: https://jsucsa-cms-auth.jsucsa.workers.dev
-  auth_endpoint: auth
-  app_id: Ov23liAZDe30lHIs3P7g
 
 publish_mode: editorial_workflow
 
@@ -19,9 +15,6 @@ collections:
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     path: "{{title}}"
-    preview_path: "blog/{{year}}/{{month}}/{{day}}/{{title}}/"
-    media_folder: ""
-    public_folder: ""
     sort_by: "date"
     sort_direction: "descending"
     fields:
@@ -44,9 +37,3 @@ collections:
         allow_add: true
       - { label: "摘要", name: "description", widget: "text", required: false }
       - { label: "正文", name: "body", widget: "markdown" }
-      - label: "置顶"
-        name: "sticky"
-        widget: "number"
-        required: false
-        min: 0
-        max: 10
