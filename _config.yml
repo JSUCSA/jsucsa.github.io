@@ -34,7 +34,6 @@ i18n_dir: :lang
 skip_render:
   - '*.html'
   - 'admin/**'
-  - 'blog/**'
 
 # Writing
 new_post_name: :title.md
@@ -61,9 +60,9 @@ prismjs:
   line_number: true
   tab_replace: ''
 
-# Home page setting - blog handled dynamically (Sanity CMS)
+# Home page setting - blog at /blog/
 index_generator:
-  path: hexo-blog
+  path: blog
   per_page: 10
   order_by: -date
 

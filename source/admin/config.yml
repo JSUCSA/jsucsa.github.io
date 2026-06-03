@@ -2,6 +2,11 @@ backend:
   name: github
   repo: JSUCSA/jsucsa.github.io
   branch: main
+  # 需要配置 GitHub OAuth App
+  # 在 https://github.com/settings/developers 创建
+  # Callback URL: https://jsucsa.github.io/admin/
+  auth_type: pkce
+  base_url: https://jsucsa.github.io
 
 publish_mode: editorial_workflow
 
@@ -15,6 +20,9 @@ collections:
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     path: "{{title}}"
+    preview_path: "blog/{{year}}/{{month}}/{{day}}/{{title}}/"
+    media_folder: ""
+    public_folder: ""
     sort_by: "date"
     sort_direction: "descending"
     fields:
@@ -37,3 +45,16 @@ collections:
         allow_add: true
       - { label: "摘要", name: "description", widget: "text", required: false }
       - { label: "正文", name: "body", widget: "markdown" }
+      - label: "置顶"
+        name: "sticky"
+        widget: "number"
+        required: false
+        min: 0
+        max: 10
+      - label: "封面图"
+        name: "cover"
+        widget: "image"
+        required: false
+        media_library:
+          config:
+            max_file_size: 5120000
