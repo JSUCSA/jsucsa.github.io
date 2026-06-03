@@ -5,6 +5,7 @@ backend:
   # Cloudflare Worker OAuth 网关（限制登录账号）
   base_url: https://jsucsa-cms-auth.jsucsa.workers.dev
   auth_endpoint: auth
+  app_id: Ov23liAZDe30lHIs3P7g
 
 publish_mode: editorial_workflow
 
