@@ -53,6 +53,7 @@
   <!-- Firebase SDK (compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
   <script>
     // ============================================
@@ -65,21 +66,10 @@
     };
 
     // ============================================
-    // 2. 授权白名单（GitHub 用户名，小写）
-    // ============================================
-    const ALLOWED_USERS = [
-      'cmijohnson',
-      'dead-captain',
-      'jinjin888-xiao',
-      'liuyueyang123',
-      'zhiend8',
-      'charlottezhiend',
-    ];
-
-    // ============================================
-    // 3. 初始化
+    // 2. 初始化
     // ============================================
     firebase.initializeApp(FIREBASE_CONFIG);
+    const db = firebase.firestore();
     const ghProvider = new firebase.auth.GithubAuthProvider();
     ghProvider.addScope('repo');
 
@@ -90,6 +80,23 @@
       $('error').style.display = 'block';
       $('loading').style.display = 'none';
       $('loginBtn').disabled = false;
+    }
+
+    // ============================================
+    // 3. 从 Firestore 获取白名单
+    // 文档路径: config/allowed_users
+    // 字段: users (数组，GitHub 用户名小写)
+    // ============================================
+    async function getAllowedUsers() {
+      try {
+        const doc = await db.collection('config').doc('allowed_users').get();
+        if (!doc.exists) return [];
+        const data = doc.data();
+        return (data.users || []).map(u => u.toLowerCase());
+      } catch (err) {
+        console.error('读取白名单失败:', err);
+        return [];
+      }
     }
 
     // ============================================
@@ -106,15 +113,15 @@
         const token = credential.accessToken;
         const username = (result.user.reloadUserInfo?.screen_name || result.user.displayName || '').toLowerCase();
 
-        if (!ALLOWED_USERS.includes(username)) {
+        // 从 Firestore 读取白名单并校验
+        const allowed = await getAllowedUsers();
+        if (!allowed.includes(username)) {
           showError(`⛔ @${username} 没有编辑权限，联系管理员添加白名单。`);
           await firebase.auth().signOut();
           return;
         }
 
         $('loading').textContent = `✅ 欢迎 @${username}，正在加载编辑器...`;
-
-        // 存储 token，进入 CMS
         localStorage.setItem('jsucsa_gh_token', token);
         localStorage.setItem('jsucsa_gh_user', username);
         loadCMS(token);
@@ -130,16 +137,22 @@
     }
 
     // ============================================
-    // 5. 检查已登录状态
+    // 5. 检查已登录状态（也从 Firestore 校验）
     // ============================================
     (async () => {
       const savedToken = localStorage.getItem('jsucsa_gh_token');
       const savedUser = localStorage.getItem('jsucsa_gh_user');
-      if (savedToken && savedUser && ALLOWED_USERS.includes(savedUser)) {
-        $('loading').textContent = `✅ 已登录 @${savedUser}，正在加载编辑器...`;
-        $('loading').style.display = 'block';
-        $('loginBtn').style.display = 'none';
-        loadCMS(savedToken);
+      if (savedToken && savedUser) {
+        const allowed = await getAllowedUsers();
+        if (allowed.includes(savedUser)) {
+          $('loading').textContent = `✅ 已登录 @${savedUser}，正在加载编辑器...`;
+          $('loading').style.display = 'block';
+          $('loginBtn').style.display = 'none';
+          loadCMS(savedToken);
+        } else {
+          localStorage.removeItem('jsucsa_gh_token');
+          localStorage.removeItem('jsucsa_gh_user');
+        }
       }
     })();
 
