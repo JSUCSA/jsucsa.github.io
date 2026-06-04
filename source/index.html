@@ -93,10 +93,12 @@
 
     /* ============ Hero ============ */
     .hero {
-      position:relative; min-height:100vh; display:flex; flex-direction:column;
-      align-items:center; justify-content:center; text-align:center;
-      padding:120px 24px 80px; z-index:1;
+      position:relative; min-height:100vh; display:flex; align-items:center;
+      justify-content:space-between; gap:48px;
+      padding:120px 24px 80px; z-index:1; max-width:1100px; margin:0 auto;
     }
+    .hero-left { flex:1; min-width:0; }
+    .hero-right { flex:0 0 440px; max-width:440px; }
     .hero-badge {
       display:inline-flex; align-items:center; gap:8px;
       padding:6px 16px 6px 10px; border-radius:100px;
@@ -154,7 +156,7 @@
     .btn-lg { padding:14px 28px; font-size:0.92rem; border-radius:14px; }
 
     /* ============ Stats ============ */
-    .hero-stats { display:flex; gap:48px; justify-content:center; }
+    .hero-stats { display:flex; gap:48px; }
     .stat-item { text-align:center; }
     .stat-num {
       font-size:2.2rem; font-weight:800; letter-spacing:-0.04em;
@@ -165,7 +167,7 @@
 
     /* ============ Code Window ============ */
     .hero-code {
-      width:100%; max-width:520px; margin-top:64px; position:relative;
+      width:100%; position:relative;
     }
     .hero-code::before {
       content:''; position:absolute; inset:-1px; border-radius:16px;
@@ -437,7 +439,11 @@
 
     /* ============ Responsive ============ */
     @media (max-width:1024px) {
-      .hero { padding-top:100px; }
+      .hero { flex-direction:column; padding-top:100px; text-align:center; }
+      .hero-left { text-align:center; }
+      .hero-right { flex:none; max-width:400px; width:100%; }
+      .hero-stats { justify-content:center; }
+      .hero-actions { justify-content:center; }
       .hero-title { font-size:clamp(2.5rem,6vw,4rem); }
       .about-grid { grid-template-columns:1fr; max-width:400px; margin:0 auto; }
       .communities-grid { grid-template-columns:1fr 1fr; }
@@ -489,31 +495,34 @@
 
   <!-- Hero -->
   <section class="hero">
-    <div class="hero-badge fade-up"><span class="dot"></span> 江苏大学 · 计算机协会</div>
-    <h1 class="hero-title">
-      <span class="line"><span>Build with</span></span>
-      <span class="line grad"><span>JSUCSA</span></span>
-    </h1>
-    <p class="hero-desc fade-up">
-      SRE · Agent 开发 · 网络安全 · AI<br>
-      以实战驱动技术成长，用代码解决真实问题。
-    </p>
-    <div class="hero-actions fade-up">
-      <a href="https://jsucsa.github.io/Lab-E-club/" class="btn btn-primary btn-lg" target="_blank">
-        <i class="fas fa-arrow-right"></i> 加入社区
-      </a>
-      <a href="/blog/" class="btn btn-outline btn-lg">阅读博客</a>
+    <div class="hero-left">
+      <div class="hero-badge"><span class="dot"></span> 江苏大学 · 计算机协会</div>
+      <h1 class="hero-title">
+        <span class="line"><span>Build with</span></span>
+        <span class="line grad"><span>JSUCSA</span></span>
+      </h1>
+      <p class="hero-desc">
+        SRE · Agent 开发 · 网络安全 · AI<br>
+        以实战驱动技术成长，用代码解决真实问题。
+      </p>
+      <div class="hero-actions">
+        <a href="https://jsucsa.github.io/Lab-E-club/" class="btn btn-primary btn-lg" target="_blank">
+          <i class="fas fa-arrow-right"></i> 加入社区
+        </a>
+        <a href="/blog/" class="btn btn-outline btn-lg">阅读博客</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item"><span class="stat-num" data-target="6">0</span><span class="stat-plus">+</span><span class="stat-label">技术方向</span></div>
+        <div class="stat-item"><span class="stat-num" data-target="100">0</span><span class="stat-plus">+</span><span class="stat-label">社区成员</span></div>
+        <div class="stat-item"><span class="stat-num" data-target="50">0</span><span class="stat-plus">+</span><span class="stat-label">技术文章</span></div>
+      </div>
     </div>
-    <div class="hero-stats fade-up">
-      <div class="stat-item"><span class="stat-num" data-target="6">0</span><span class="stat-plus">+</span><span class="stat-label">技术方向</span></div>
-      <div class="stat-item"><span class="stat-num" data-target="100">0</span><span class="stat-plus">+</span><span class="stat-label">社区成员</span></div>
-      <div class="stat-item"><span class="stat-num" data-target="50">0</span><span class="stat-plus">+</span><span class="stat-label">技术文章</span></div>
-    </div>
-    <div class="hero-code fade-up">
-      <div class="code-win">
-        <div class="code-bar"><span class="code-dot r"></span><span class="code-dot y"></span><span class="code-dot g"></span><span class="name">welcome.ts</span></div>
-        <div class="code-body">
-          <pre><code><span class="ck">const</span> <span class="cv">community</span> = {
+    <div class="hero-right">
+      <div class="hero-code">
+        <div class="code-win">
+          <div class="code-bar"><span class="code-dot r"></span><span class="code-dot y"></span><span class="code-dot g"></span><span class="name">welcome.ts</span></div>
+          <div class="code-body">
+            <pre><code><span class="ck">const</span> <span class="cv">community</span> = {
   <span class="cn">name</span>: <span class="cs">"JSUCSA"</span>,
   <span class="cn">school</span>: <span class="cs">"江苏大学"</span>,
   <span class="cn">focus</span>: [<span class="cs">"SRE"</span>, <span class="cs">"Agent"</span>, <span class="cs">"Security"</span>, <span class="cs">"AI"</span>],
@@ -521,8 +530,10 @@
 };
 
 <span class="ck">await</span> <span class="cv">community</span>.<span class="cf">join</span>(<span class="cs">"you"</span>); <span class="cc">// 🚀</span></code></pre>
+          </div>
         </div>
       </div>
+    </div>
     </div>
   </section>
 
