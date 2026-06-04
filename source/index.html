@@ -16,25 +16,25 @@
        ============================================ */
 
     :root {
-      --bg-primary: #0a0e1a;
-      --bg-secondary: #111827;
-      --bg-card: #1a1f35;
-      --bg-glass: rgba(17, 24, 39, 0.7);
-      --text-primary: #f1f5f9;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
-      --accent-blue: #3b82f6;
-      --accent-cyan: #06b6d4;
-      --accent-purple: #8b5cf6;
+      --bg-primary: #080e0e;
+      --bg-secondary: #0d1717;
+      --bg-card: #111f1f;
+      --bg-glass: rgba(13, 23, 23, 0.7);
+      --text-primary: #f0fdf4;
+      --text-secondary: #94b8a8;
+      --text-muted: #5e8a76;
       --accent-green: #10b981;
-      --accent-orange: #f59e0b;
-      --accent-pink: #ec4899;
-      --gradient-primary: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      --gradient-accent: linear-gradient(135deg, #06b6d4, #3b82f6);
-      --border-color: rgba(148, 163, 184, 0.1);
-      --border-glow: rgba(59, 130, 246, 0.3);
+      --accent-emerald: #34d399;
+      --accent-teal: #14b8a6;
+      --accent-cyan: #06b6d4;
+      --accent-blue: #06b6d4;
+      --gradient-primary: linear-gradient(135deg, #10b981, #06b6d4);
+      --gradient-accent: linear-gradient(135deg, #14b8a6, #3b82f6);
+      --gradient-warm: linear-gradient(135deg, #34d399, #10b981);
+      --border-color: rgba(16, 185, 129, 0.1);
+      --border-glow: rgba(16, 185, 129, 0.3);
       --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-      --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.15);
+      --shadow-glow: 0 0 30px rgba(16, 185, 129, 0.15);
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 20px;
@@ -113,7 +113,7 @@
       padding: 8px 20px; border-radius: var(--radius-xl);
       font-weight: 600; display: flex; align-items: center; gap: 6px;
     }
-    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
+    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
     .nav-cta i { font-size: 0.75rem; }
     .nav-toggle {
       display: none; flex-direction: column; gap: 5px;
@@ -133,16 +133,16 @@
     .hero::before {
       content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background:
-        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(59, 130, 246, 0.12), transparent),
-        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(139, 92, 246, 0.08), transparent),
-        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(6, 182, 212, 0.06), transparent);
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(16, 185, 129, 0.12), transparent),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(6, 182, 212, 0.08), transparent),
+        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(20, 184, 166, 0.06), transparent);
       pointer-events: none; z-index: -1;
     }
     .hero-content { flex: 1; min-width: 0; }
     .hero-badge {
       display: inline-flex; align-items: center; gap: 8px;
-      padding: 8px 18px; background: rgba(59, 130, 246, 0.1);
-      border: 1px solid rgba(59, 130, 246, 0.2);
+      padding: 8px 18px; background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
       border-radius: var(--radius-xl); font-size: 0.85rem;
       font-weight: 500; color: var(--accent-blue); margin-bottom: 28px;
     }
@@ -179,17 +179,17 @@
     }
     .btn-primary {
       background: var(--gradient-primary); color: white;
-      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
     }
     .btn-primary:hover {
-      transform: translateY(-2px); box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+      transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
     }
     .btn-outline {
       background: transparent; color: var(--text-primary);
       border: 1px solid var(--border-color); backdrop-filter: blur(10px);
     }
     .btn-outline:hover {
-      border-color: var(--accent-blue); background: rgba(59, 130, 246, 0.1);
+      border-color: var(--accent-blue); background: rgba(16, 185, 129, 0.1);
       transform: translateY(-2px);
     }
     .btn-ghost {
@@ -251,7 +251,7 @@
     .section-header { text-align: center; margin-bottom: 60px; }
     .section-tag {
       display: inline-block; padding: 6px 16px;
-      background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);
+      background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);
       border-radius: var(--radius-xl); font-size: 0.8rem; font-weight: 600;
       color: var(--accent-blue); margin-bottom: 20px; letter-spacing: 2px; text-transform: uppercase;
     }
@@ -275,7 +275,7 @@
     .about-card:hover::before { transform: scaleX(1); }
     .about-icon {
       width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 20px; background: rgba(59, 130, 246, 0.1);
+      margin: 0 auto 20px; background: rgba(16, 185, 129, 0.1);
       border-radius: var(--radius-md); font-size: 1.5rem; color: var(--accent-blue);
       transition: var(--transition);
     }
@@ -286,7 +286,7 @@
     .about-card p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; }
 
     /* --- Communities --- */
-    .communities-section { background: linear-gradient(180deg, transparent, rgba(59, 130, 246, 0.03), transparent); }
+    .communities-section { background: linear-gradient(180deg, transparent, rgba(16, 185, 129, 0.03), transparent); }
     .communities-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
     .community-card {
       position: relative; background: var(--bg-card);
@@ -300,19 +300,19 @@
     .community-card.featured {
       grid-column: span 3; display: flex; align-items: center;
       gap: 24px; text-align: left; padding: 36px 40px;
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.1));
-      border-color: rgba(59, 130, 246, 0.3);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.1));
+      border-color: rgba(16, 185, 129, 0.3);
     }
     .community-card.featured .community-icon { width: 72px; height: 72px; font-size: 1.8rem; flex-shrink: 0; }
     .card-glow {
       position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.08), transparent 50%);
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.08), transparent 50%);
       opacity: 0; transition: var(--transition); pointer-events: none;
     }
     .community-card:hover .card-glow { opacity: 1; }
     .community-icon {
       width: 52px; height: 52px; display: flex; align-items: center; justify-content: center;
-      background: rgba(59, 130, 246, 0.1); border-radius: var(--radius-md);
+      background: rgba(16, 185, 129, 0.1); border-radius: var(--radius-md);
       font-size: 1.3rem; color: var(--accent-blue); margin-bottom: 16px; transition: var(--transition);
     }
     .community-card:hover .community-icon {
@@ -341,8 +341,8 @@
     }
     .event-date {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      min-width: 70px; padding: 12px; background: rgba(59, 130, 246, 0.1);
-      border-radius: var(--radius-md); border: 1px solid rgba(59, 130, 246, 0.2);
+      min-width: 70px; padding: 12px; background: rgba(16, 185, 129, 0.1);
+      border-radius: var(--radius-md); border: 1px solid rgba(16, 185, 129, 0.2);
     }
     .event-month { font-size: 0.75rem; font-weight: 600; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 1px; }
     .event-day { font-size: 1.5rem; font-weight: 900; color: var(--text-primary); }
@@ -350,7 +350,7 @@
     .event-info p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 12px; line-height: 1.6; }
     .event-tag {
       display: inline-flex; align-items: center; gap: 6px;
-      padding: 4px 12px; background: rgba(139, 92, 246, 0.1);
+      padding: 4px 12px; background: rgba(6, 182, 212, 0.1);
       border-radius: var(--radius-xl); font-size: 0.8rem; color: var(--accent-purple);
     }
 
@@ -358,8 +358,8 @@
     .cta-section { padding: 60px 0 100px; }
     .cta-card {
       position: relative;
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.1));
-      border: 1px solid rgba(59, 130, 246, 0.2);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.1));
+      border: 1px solid rgba(16, 185, 129, 0.2);
       border-radius: var(--radius-xl); padding: 60px;
       text-align: center; overflow: hidden;
     }
@@ -368,7 +368,7 @@
     .cta-card p { color: var(--text-secondary); font-size: 1.05rem; max-width: 500px; margin: 0 auto 32px; line-height: 1.7; }
     .cta-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
     .cta-decoration { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 1; }
-    .cta-circle { position: absolute; border-radius: 50%; border: 1px solid rgba(59, 130, 246, 0.1); }
+    .cta-circle { position: absolute; border-radius: 50%; border: 1px solid rgba(16, 185, 129, 0.1); }
     .cta-circle.c1 { width: 300px; height: 300px; top: -100px; right: -80px; animation: spin 30s linear infinite; }
     .cta-circle.c2 { width: 200px; height: 200px; bottom: -60px; left: -40px; animation: spin 25s linear infinite reverse; }
     .cta-circle.c3 { width: 150px; height: 150px; top: 50%; left: 50%; animation: spin3 20s linear infinite; }
@@ -389,7 +389,7 @@
     }
     .friend-avatar {
       width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
-      background: rgba(59, 130, 246, 0.1); border-radius: var(--radius-md);
+      background: rgba(16, 185, 129, 0.1); border-radius: var(--radius-md);
       font-size: 1.5rem; flex-shrink: 0;
     }
     .friend-info { flex: 1; min-width: 0; }
@@ -399,7 +399,7 @@
     .friend-card:hover .friend-arrow { transform: translateX(4px); }
     .friend-apply {
       text-align: center; margin-top: 32px; padding: 20px;
-      background: rgba(59, 130, 246, 0.05); border: 1px dashed rgba(59, 130, 246, 0.2);
+      background: rgba(16, 185, 129, 0.05); border: 1px dashed rgba(16, 185, 129, 0.2);
       border-radius: var(--radius-lg); font-size: 0.9rem; color: var(--text-secondary);
     }
     .friend-apply a { color: var(--accent-cyan); font-weight: 600; }
@@ -738,11 +738,19 @@
           </div>
           <span class="friend-arrow"><i class="fas fa-arrow-right"></i></span>
         </a>
-        <a href="https://www.jiangsu.edu.cn" target="_blank" class="friend-card animate-on-scroll">
+        <a href="https://www.ujs.edu.cn" target="_blank" class="friend-card animate-on-scroll">
           <div class="friend-avatar">🎓</div>
           <div class="friend-info">
             <h3>江苏大学</h3>
             <p>江苏大学官方网站</p>
+          </div>
+          <span class="friend-arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a href="https://cs.ujs.edu.cn" target="_blank" class="friend-card animate-on-scroll">
+          <div class="friend-avatar">💻</div>
+          <div class="friend-info">
+            <h3>计算机学院</h3>
+            <p>江苏大学计算机科学与通信工程学院</p>
           </div>
           <span class="friend-arrow"><i class="fas fa-arrow-right"></i></span>
         </a>
@@ -851,7 +859,7 @@
       // Particles
       const pc = document.getElementById('particles');
       if (pc) {
-        const colors = ['#3b82f6', '#8b5cf6', '#06b6d4', '#10b981'];
+        const colors = ['#10b981', '#06b6d4', '#14b8a6', '#3b82f6'];
         const createParticle = () => {
           const p = document.createElement('div');
           p.className = 'particle';

@@ -88,7 +88,13 @@
       "emoji": "🎓",
       "title": "江苏大学",
       "desc": "江苏大学官方网站",
-      "url": "https://www.jiangsu.edu.cn"
+      "url": "https://www.ujs.edu.cn"
+    },
+    {
+      "emoji": "💻",
+      "title": "计算机学院",
+      "desc": "江苏大学计算机科学与通信工程学院",
+      "url": "https://cs.ujs.edu.cn"
     }
   ],
   "contact": {
