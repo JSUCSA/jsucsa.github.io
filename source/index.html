@@ -375,6 +375,36 @@
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     @keyframes spin3 { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 
+    /* --- Friends --- */
+    .friends-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+    .friend-card {
+      display: flex; align-items: center; gap: 16px;
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg); padding: 20px 24px;
+      transition: var(--transition); cursor: pointer;
+    }
+    .friend-card:hover {
+      border-color: var(--border-glow); transform: translateY(-3px);
+      box-shadow: var(--shadow-glow);
+    }
+    .friend-avatar {
+      width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+      background: rgba(59, 130, 246, 0.1); border-radius: var(--radius-md);
+      font-size: 1.5rem; flex-shrink: 0;
+    }
+    .friend-info { flex: 1; min-width: 0; }
+    .friend-info h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .friend-info p { font-size: 0.8rem; color: var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .friend-arrow { color: var(--accent-blue); transition: var(--transition); }
+    .friend-card:hover .friend-arrow { transform: translateX(4px); }
+    .friend-apply {
+      text-align: center; margin-top: 32px; padding: 20px;
+      background: rgba(59, 130, 246, 0.05); border: 1px dashed rgba(59, 130, 246, 0.2);
+      border-radius: var(--radius-lg); font-size: 0.9rem; color: var(--text-secondary);
+    }
+    .friend-apply a { color: var(--accent-cyan); font-weight: 600; }
+    .friend-apply a:hover { text-decoration: underline; }
+
     /* --- Footer --- */
     .footer {
       background: var(--bg-secondary); border-top: 1px solid var(--border-color);
@@ -456,6 +486,7 @@
         <a href="#about" class="nav-link">关于我们</a>
         <a href="#communities" class="nav-link">社区</a>
         <a href="#events" class="nav-link">活动</a>
+        <a href="#friends" class="nav-link">友链</a>
         <a href="/blog/" class="nav-link">博客</a>
         <a href="/admin/" class="nav-link"><i class="fas fa-pen"></i> 写文章</a>
         <a href="https://jsucsa.github.io/Lab-E-club/" class="nav-link nav-cta" target="_blank">
@@ -682,6 +713,46 @@
     </div>
   </section>
 
+  <!-- 友链 -->
+  <section id="friends" class="section">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <span class="section-tag">友情链接</span>
+        <h2 class="section-title">我们的伙伴</h2>
+        <p class="section-desc">志同道合的技术社区与组织。</p>
+      </div>
+      <div class="friends-grid">
+        <a href="https://jsucsa.github.io/Lab-E-club/" target="_blank" class="friend-card animate-on-scroll">
+          <div class="friend-avatar">🖥️</div>
+          <div class="friend-info">
+            <h3>ITLab 技术社区</h3>
+            <p>江苏大学 SRE · 网安 · 运维 社区</p>
+          </div>
+          <span class="friend-arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a href="https://github.com/JSUCSA" target="_blank" class="friend-card animate-on-scroll">
+          <div class="friend-avatar"><i class="fab fa-github" style="font-size:1.5rem;color:var(--accent-blue)"></i></div>
+          <div class="friend-info">
+            <h3>JSUCSA GitHub</h3>
+            <p>我们的开源项目与代码仓库</p>
+          </div>
+          <span class="friend-arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a href="https://www.jiangsu.edu.cn" target="_blank" class="friend-card animate-on-scroll">
+          <div class="friend-avatar">🎓</div>
+          <div class="friend-info">
+            <h3>江苏大学</h3>
+            <p>江苏大学官方网站</p>
+          </div>
+          <span class="friend-arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
+      </div>
+      <div class="friend-apply animate-on-scroll">
+        <p>想要交换友链？<a href="https://github.com/JSUCSA/jsucsa.github.io/issues/new" target="_blank">提交 Issue</a> 联系我们 🤝</p>
+      </div>
+    </div>
+  </section>
+
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
@@ -698,6 +769,7 @@
           <a href="https://jsucsa.github.io/Lab-E-club/" target="_blank">ITLab 社区</a>
           <a href="#communities">技术方向</a>
           <a href="#events">近期活动</a>
+          <a href="#friends">友情链接</a>
         </div>
         <div class="footer-links-group">
           <h4>资源</h4>
