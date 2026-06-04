@@ -347,12 +347,93 @@
       font-size:0.75rem; color:var(--text-muted);
     }
 
+    /* ============ Loading Screen ============ */
+    .loader {
+      position:fixed; inset:0; z-index:9999; background:var(--bg);
+      display:flex; align-items:center; justify-content:center;
+      transition:opacity 0.6s var(--ease), visibility 0.6s;
+    }
+    .loader.done { opacity:0; visibility:hidden; pointer-events:none; }
+    .loader-inner { text-align:center; }
+    .loader-logo {
+      font-size:2rem; font-weight:900; letter-spacing:-0.04em;
+      background:var(--grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      animation:loaderPulse 1.5s ease infinite;
+    }
+    @keyframes loaderPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(0.97)} }
+    .loader-bar { width:120px; height:2px; background:var(--border); border-radius:2px; margin:20px auto 0; overflow:hidden; }
+    .loader-bar::after {
+      content:''; display:block; width:40%; height:100%; background:var(--grad); border-radius:2px;
+      animation:loaderSlide 1s ease infinite;
+    }
+    @keyframes loaderSlide { 0%{transform:translateX(-100%)} 100%{transform:translateX(350%)} }
+
+    /* ============ Cursor Glow ============ */
+    .cursor-glow {
+      position:fixed; width:500px; height:500px; border-radius:50%;
+      background:radial-gradient(circle, rgba(16,185,129,0.06), transparent 70%);
+      pointer-events:none; z-index:0; transform:translate(-50%,-50%);
+      transition:opacity 0.3s; opacity:0;
+    }
+    body:hover .cursor-glow { opacity:1; }
+
     /* ============ Animations ============ */
     .fade-up {
-      opacity:0; transform:translateY(24px);
-      transition:opacity 0.7s var(--ease), transform 0.7s var(--ease);
+      opacity:0; transform:translateY(30px);
+      transition:opacity 0.8s var(--ease), transform 0.8s var(--ease);
     }
     .fade-up.show { opacity:1; transform:translateY(0); }
+    .fade-left {
+      opacity:0; transform:translateX(-30px);
+      transition:opacity 0.8s var(--ease), transform 0.8s var(--ease);
+    }
+    .fade-left.show { opacity:1; transform:translateX(0); }
+    .fade-right {
+      opacity:0; transform:translateX(30px);
+      transition:opacity 0.8s var(--ease), transform 0.8s var(--ease);
+    }
+    .fade-right.show { opacity:1; transform:translateX(0); }
+    .scale-in {
+      opacity:0; transform:scale(0.9);
+      transition:opacity 0.7s var(--ease), transform 0.7s var(--ease);
+    }
+    .scale-in.show { opacity:1; transform:scale(1); }
+
+    /* Hero text reveal */
+    .hero-title .line {
+      display:block; overflow:hidden;
+    }
+    .hero-title .line span {
+      display:inline-block;
+      animation:revealUp 0.9s var(--ease) backwards;
+    }
+    .hero-title .line:nth-child(1) span { animation-delay:0.4s; }
+    .hero-title .line:nth-child(2) span { animation-delay:0.6s; }
+    @keyframes revealUp {
+      from { opacity:0; transform:translateY(100%); filter:blur(8px); }
+      to { opacity:1; transform:translateY(0); filter:blur(0); }
+    }
+
+    /* Hero badge slide */
+    .hero-badge {
+      animation:badgeIn 0.7s var(--ease) 0.2s backwards;
+    }
+    @keyframes badgeIn { from { opacity:0; transform:translateY(16px) scale(0.95); } }
+
+    /* Hero desc fade */
+    .hero-desc { animation:fadeSimple 0.8s var(--ease) 0.8s backwards; }
+    .hero-actions { animation:fadeSimple 0.8s var(--ease) 1s backwards; }
+    .hero-stats { animation:fadeSimple 0.8s var(--ease) 1.2s backwards; }
+    .hero-code { animation:fadeSimple 1s var(--ease) 1.4s backwards; }
+    @keyframes fadeSimple { from { opacity:0; transform:translateY(20px); } }
+
+    /* Cards stagger */
+    .about-card, .community-card, .friend-card, .event-card {
+      transition:transform 0.4s var(--ease), box-shadow 0.4s var(--ease), border-color 0.4s var(--ease), opacity 0.6s var(--ease);
+    }
+
+    /* Magnetic button */
+    .btn { transition:transform 0.3s var(--ease), box-shadow 0.3s var(--ease), background 0.3s; }
 
     /* ============ Responsive ============ */
     @media (max-width:1024px) {
@@ -375,6 +456,15 @@
   </style>
 </head>
 <body>
+  <!-- Loading -->
+  <div class="loader" id="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">JSUCSA</div>
+      <div class="loader-bar"></div>
+    </div>
+  </div>
+
+  <div class="cursor-glow" id="cursorGlow"></div>
   <div class="bg-mesh"></div>
   <div class="bg-grid"></div>
   <div class="bg-noise"></div>
@@ -400,9 +490,9 @@
   <!-- Hero -->
   <section class="hero">
     <div class="hero-badge fade-up"><span class="dot"></span> 江苏大学 · 计算机协会</div>
-    <h1 class="hero-title fade-up">
-      <span class="line">Build with</span>
-      <span class="line grad">JSUCSA</span>
+    <h1 class="hero-title">
+      <span class="line"><span>Build with</span></span>
+      <span class="line grad"><span>JSUCSA</span></span>
     </h1>
     <p class="hero-desc fade-up">
       SRE · Agent 开发 · 网络安全 · AI<br>
@@ -566,6 +656,36 @@
   </footer>
 
   <script>
+    // Loading screen
+    window.addEventListener('load', () => {
+      setTimeout(() => document.getElementById('loader')?.classList.add('done'), 600);
+    });
+    // Fallback: hide loader after 3s max
+    setTimeout(() => document.getElementById('loader')?.classList.add('done'), 3000);
+
+    // Cursor glow
+    const glow = document.getElementById('cursorGlow');
+    if (glow) {
+      let mx = 0, my = 0, gx = 0, gy = 0;
+      document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+      (function moveGlow() {
+        gx += (mx - gx) * 0.08; gy += (my - gy) * 0.08;
+        glow.style.left = gx + 'px'; glow.style.top = gy + 'px';
+        requestAnimationFrame(moveGlow);
+      })();
+    }
+
+    // Magnetic buttons
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('mousemove', e => {
+        const r = btn.getBoundingClientRect();
+        const x = e.clientX - r.left - r.width / 2;
+        const y = e.clientY - r.top - r.height / 2;
+        btn.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
+      });
+      btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+    });
+
     // Matrix rain
     (() => {
       const c = document.getElementById('matrix');
