@@ -55,7 +55,7 @@
       "tag": "SRE",
       "tagIcon": "fas fa-server",
       "link": "/blog/tags/SRE/",
-      "signup": "https://github.com/JSUCSA/jsucsa.github.io/issues/new?title=报名：SRE实战分享&body=姓名：%0A联系方式："
+      "signup": "https://forms.gle/你的GoogleForm链接"
     },
     {
       "title": "Agent 开发工坊",
@@ -63,7 +63,7 @@
       "tag": "Agent",
       "tagIcon": "fas fa-robot",
       "link": "/blog/tags/Agent/",
-      "signup": "https://github.com/JSUCSA/jsucsa.github.io/issues/new?title=报名：Agent开发工坊&body=姓名：%0A联系方式："
+      "signup": "https://forms.gle/你的GoogleForm链接"
     },
     {
       "title": "CTF 竞赛训练",
@@ -71,7 +71,7 @@
       "tag": "CTF",
       "tagIcon": "fas fa-flag",
       "link": "/blog/tags/安全/",
-      "signup": "https://github.com/JSUCSA/jsucsa.github.io/issues/new?title=报名：CTF竞赛训练&body=姓名：%0A联系方式："
+      "signup": "https://forms.gle/你的GoogleForm链接"
     }
   ],
   "friends": [
