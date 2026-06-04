@@ -378,6 +378,7 @@
   <div class="bg-mesh"></div>
   <div class="bg-grid"></div>
   <div class="bg-noise"></div>
+  <canvas id="matrix" style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.07;"></canvas>
 
   <!-- Nav -->
   <nav class="nav">
@@ -565,6 +566,55 @@
   </footer>
 
   <script>
+    // Matrix rain
+    (() => {
+      const c = document.getElementById('matrix');
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*(){}[]|;:,.<>?/~`!-=+_αβγδεζηθ你好世界科技代码安全智能网络系统数据'.split('');
+      let cols, drops;
+      const fontSize = 14;
+
+      function resize() {
+        c.width = window.innerWidth;
+        c.height = window.innerHeight;
+        cols = Math.floor(c.width / fontSize);
+        drops = Array.from({ length: cols }, () => Math.random() * -100);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      function draw() {
+        ctx.fillStyle = 'rgba(5, 10, 10, 0.06)';
+        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.font = fontSize + 'px JetBrains Mono, monospace';
+
+        for (let i = 0; i < cols; i++) {
+          const char = chars[Math.random() * chars.length | 0];
+          const x = i * fontSize;
+          const y = drops[i] * fontSize;
+
+          // Head char brighter
+          ctx.fillStyle = 'rgba(16, 185, 129, 0.9)';
+          ctx.fillText(char, x, y);
+
+          // Trail chars dimmer
+          if (drops[i] > 1) {
+            const prev = chars[Math.random() * chars.length | 0];
+            ctx.fillStyle = 'rgba(16, 185, 129, 0.3)';
+            ctx.fillText(prev, x, y - fontSize);
+          }
+
+          if (y > c.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i] += 0.5 + Math.random() * 0.5;
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
     document.addEventListener('DOMContentLoaded', () => {
       // Nav scroll
       const nav = document.querySelector('.nav');
