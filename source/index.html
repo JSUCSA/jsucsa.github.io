@@ -879,7 +879,7 @@
     // ============================================
     (async () => {
       try {
-        const res = await fetch('/data/site.json');
+        const res = await fetch('/data/site.json?v=' + Date.now());
         if (!res.ok) return;
         const data = await res.json();
 
@@ -916,7 +916,7 @@
           const grid = document.querySelector('#events .events-grid');
           if (grid) {
             grid.innerHTML = data.events.map(item => `
-              <a href="${item.link || '#'}" class="event-card animate-on-scroll" ${item.link ? 'target="_blank"' : ''}>
+              <div class="event-card animate-on-scroll" onclick="${item.link ? `window.open('${item.link}','_blank')` : ''}" ${item.link ? 'style="cursor:pointer"' : ''}>
                 <div class="event-date">
                   <span class="event-month">定期</span>
                   <span class="event-day">举办</span>
@@ -926,7 +926,7 @@
                   <p>${item.desc}</p>
                   <span class="event-tag"><i class="${item.tagIcon}"></i> ${item.tag}</span>
                 </div>
-              </a>
+              </div>
             `).join('');
           }
         }
@@ -984,7 +984,9 @@
         }, { threshold: 0.1 });
         document.querySelectorAll('.animate-on-scroll:not(.visible)').forEach(el => observer.observe(el));
 
-      } catch {}
+      } catch (err) {
+        console.warn('[JSUCSA] site.json 加载失败:', err);
+      }
     })();
   </script>
 </body>
