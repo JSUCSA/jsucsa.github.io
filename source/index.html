@@ -785,7 +785,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2025 jsucsa · 江苏大学计算机协会</p>
+        <p>&copy; 2025 JSUCSA · 江苏大学计算机协会</p>
         <p class="footer-tech">Built with <i class="fas fa-heart" style="color: #e74c3c;"></i> & Hexo</p>
       </div>
     </div>
@@ -873,6 +873,119 @@
         });
       });
     });
+
+    // ============================================
+    // 从 site.json 动态渲染首页内容
+    // ============================================
+    (async () => {
+      try {
+        const res = await fetch('/data/site.json');
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // About
+        if (data.about) {
+          const grid = document.querySelector('#about .about-grid');
+          if (grid) {
+            grid.innerHTML = data.about.map(item => `
+              <div class="about-card animate-on-scroll">
+                <div class="about-icon"><i class="${item.icon}"></i></div>
+                <h3>${item.title}</h3>
+                <p>${item.desc}</p>
+              </div>
+            `).join('');
+          }
+        }
+
+        // Communities
+        if (data.communities) {
+          const grid = document.querySelector('#communities .communities-grid');
+          if (grid) {
+            grid.innerHTML = data.communities.map(item => `
+              <div class="community-card animate-on-scroll${item.featured ? ' featured' : ''}">
+                <div class="community-icon"><i class="${item.icon}"></i></div>
+                <h3>${item.title}</h3>
+                <p>${item.desc}</p>
+              </div>
+            `).join('');
+          }
+        }
+
+        // Events
+        if (data.events) {
+          const grid = document.querySelector('#events .events-grid');
+          if (grid) {
+            grid.innerHTML = data.events.map(item => `
+              <a href="${item.link || '#'}" class="event-card animate-on-scroll" ${item.link ? 'target="_blank"' : ''}>
+                <div class="event-date">
+                  <span class="event-month">定期</span>
+                  <span class="event-day">举办</span>
+                </div>
+                <div class="event-info">
+                  <h3>${item.title}</h3>
+                  <p>${item.desc}</p>
+                  <span class="event-tag"><i class="${item.tagIcon}"></i> ${item.tag}</span>
+                </div>
+              </a>
+            `).join('');
+          }
+        }
+
+        // Friends
+        if (data.friends) {
+          const grid = document.querySelector('#friends .friends-grid');
+          if (grid) {
+            grid.innerHTML = data.friends.map(item => {
+              const avatar = item.emoji === 'github'
+                ? '<i class="fab fa-github" style="font-size:1.5rem;color:var(--accent-blue)"></i>'
+                : item.emoji;
+              return `
+                <a href="${item.url}" target="_blank" class="friend-card animate-on-scroll">
+                  <div class="friend-avatar">${avatar}</div>
+                  <div class="friend-info">
+                    <h3>${item.title}</h3>
+                    <p>${item.desc}</p>
+                  </div>
+                  <span class="friend-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+              `;
+            }).join('');
+          }
+        }
+
+        // Contact
+        if (data.contact) {
+          const links = document.querySelector('.footer-links-group:last-of-type');
+          if (links) {
+            const items = [];
+            if (data.contact.qq) items.push(`<a href="${data.contact.qqUrl || '#'}" target="_blank"><i class="fab fa-qq"></i> QQ 群: ${data.contact.qq}</a>`);
+            if (data.contact.email) items.push(`<a href="mailto:${data.contact.email}"><i class="fas fa-envelope"></i> ${data.contact.email}</a>`);
+            items.push(`<a href="https://github.com/jsucsa" target="_blank"><i class="fab fa-github"></i> GitHub</a>`);
+            links.innerHTML = `<h4>联系</h4>` + items.join('');
+          }
+        }
+
+        // Stats
+        if (data.stats) {
+          const nums = document.querySelectorAll('.stat-number');
+          if (nums[0]) nums[0].dataset.target = data.stats.directions;
+          if (nums[1]) nums[1].dataset.target = data.stats.members;
+          if (nums[2]) nums[2].dataset.target = data.stats.articles;
+        }
+
+        // 重新触发动画
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+              setTimeout(() => entry.target.classList.add('visible'), i * 80);
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.animate-on-scroll:not(.visible)').forEach(el => observer.observe(el));
+
+      } catch {}
+    })();
   </script>
 </body>
 </html>

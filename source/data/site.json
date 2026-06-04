@@ -1,0 +1,104 @@
+{
+  "about": [
+    {
+      "icon": "fas fa-server",
+      "title": "SRE & 运维",
+      "desc": "深入系统可靠性工程，掌握可观测性、自动化运维、故障演练等核心技能。"
+    },
+    {
+      "icon": "fas fa-robot",
+      "title": "Agent 开发",
+      "desc": "探索 AI Agent 架构设计，构建智能体应用，推动自动化与智能化落地。"
+    },
+    {
+      "icon": "fas fa-shield-alt",
+      "title": "网络安全",
+      "desc": "攻防实战、CTF 竞赛、安全研究，在对抗中提升安全能力与思维方式。"
+    }
+  ],
+  "communities": [
+    {
+      "icon": "fas fa-server",
+      "title": "SRE & 运维",
+      "desc": "可观测性 · 自动化运维 · 故障演练",
+      "featured": false
+    },
+    {
+      "icon": "fas fa-robot",
+      "title": "Agent 开发",
+      "desc": "AI Agent · LLM 应用 · 智能体架构",
+      "featured": false
+    },
+    {
+      "icon": "fas fa-shield-alt",
+      "title": "网络安全",
+      "desc": "渗透测试 · CTF · 安全研究",
+      "featured": false
+    },
+    {
+      "icon": "fas fa-brain",
+      "title": "人工智能",
+      "desc": "机器学习 · 深度学习 · NLP",
+      "featured": false
+    },
+    {
+      "icon": "fas fa-code",
+      "title": "全栈开发",
+      "desc": "Go · TypeScript · 系统工具",
+      "featured": false
+    }
+  ],
+  "events": [
+    {
+      "title": "SRE 实战分享",
+      "desc": "系统可靠性工程实战经验分享，涵盖监控告警、故障排查、容量规划等核心主题。",
+      "tag": "SRE",
+      "tagIcon": "fas fa-server",
+      "link": "/blog/tags/SRE/"
+    },
+    {
+      "title": "Agent 开发工坊",
+      "desc": "从 LLM 调用到智能体架构，动手构建 AI Agent 应用，探索自动化新范式。",
+      "tag": "Agent",
+      "tagIcon": "fas fa-robot",
+      "link": "/blog/tags/Agent/"
+    },
+    {
+      "title": "CTF 竞赛训练",
+      "desc": "网络安全攻防演练，CTF 题目解析与实战训练，组队参加各类安全竞赛。",
+      "tag": "CTF",
+      "tagIcon": "fas fa-flag",
+      "link": "/blog/tags/安全/"
+    }
+  ],
+  "friends": [
+    {
+      "emoji": "🖥️",
+      "title": "ITLab 技术社区",
+      "desc": "江苏大学 SRE · 网安 · 运维 社区",
+      "url": "https://jsucsa.github.io/Lab-E-club/"
+    },
+    {
+      "emoji": "github",
+      "title": "JSUCSA GitHub",
+      "desc": "我们的开源项目与代码仓库",
+      "url": "https://github.com/JSUCSA"
+    },
+    {
+      "emoji": "🎓",
+      "title": "江苏大学",
+      "desc": "江苏大学官方网站",
+      "url": "https://www.jiangsu.edu.cn"
+    }
+  ],
+  "contact": {
+    "qq": "123456789",
+    "qqUrl": "https://qm.qq.com/q/your-group-link",
+    "email": "jsucsa@example.com"
+  },
+  "stats": {
+    "directions": 6,
+    "members": 100,
+    "articles": 50
+  }
+}

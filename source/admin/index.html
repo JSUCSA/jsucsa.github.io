@@ -193,8 +193,11 @@
     <div class="sep"></div>
     <div class="file-path" id="filePath">source/_posts/新文章.md</div>
     <div class="actions">
-      <button class="btn btn-ghost" onclick="newPost()" title="新建文章">✏️ 新建</button>
-      <button class="btn btn-ghost" onclick="location.href='/blog/'" title="查看博客">👀 预览</button>
+      <button class="btn btn-ghost" id="tabBlog" onclick="switchTab('blog')" style="border-color:var(--blue)">📝 博客</button>
+      <button class="btn btn-ghost" id="tabSite" onclick="switchTab('site')">⚙️ 首页配置</button>
+      <div class="sep"></div>
+      <button class="btn btn-ghost" onclick="newPost()" title="新建文章" id="newBtn">✏️ 新建</button>
+      <button class="btn btn-ghost" onclick="window.open(location.origin,'_blank')" title="查看网站">👀 预览</button>
       <button class="btn btn-green" id="saveBtn" onclick="savePost()" disabled>💾 保存</button>
     </div>
   </div>
@@ -244,6 +247,99 @@
       </div>
     </div>
   </div>
+
+  <!-- Site config editor (hidden by default) -->
+  <div id="siteEditor" style="display:none; flex:1; overflow:auto; padding:24px;">
+    <div style="max-width:800px; margin:0 auto;">
+      <h2 style="font-size:1.4rem; margin-bottom:20px;">⚙️ 首页配置</h2>
+      <p style="color:var(--muted); font-size:0.85rem; margin-bottom:24px;">修改后点保存，首页内容会自动更新。JSON 格式，支持的字段见下方示例。</p>
+
+      <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap;">
+        <button class="btn btn-ghost" onclick="loadSiteConfig()">🔄 重新加载</button>
+        <button class="btn btn-green" onclick="saveSiteConfig()">💾 保存配置</button>
+        <a class="btn btn-ghost" href="/" target="_blank">👀 预览首页</a>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+          <button class="btn btn-ghost" onclick="showSection('about')" id="secAbout">关于我们</button>
+          <button class="btn btn-ghost" onclick="showSection('communities')" id="secCommunities">技术方向</button>
+          <button class="btn btn-ghost" onclick="showSection('events')" id="secEvents">近期活动</button>
+          <button class="btn btn-ghost" onclick="showSection('friends')" id="secFriends">友情链接</button>
+          <button class="btn btn-ghost" onclick="showSection('contact')" id="secContact">联系方式</button>
+          <button class="btn btn-ghost" onclick="showSection('stats')" id="secStats">统计数据</button>
+          <button class="btn btn-ghost" onclick="showSection('all')" id="secAll" style="border-color:var(--blue)">完整 JSON</button>
+        </div>
+      </div>
+
+      <!-- Section editors -->
+      <div id="sectionEditors">
+        <!-- About -->
+        <div class="section-editor" id="editor-about" style="display:none;">
+          <h3 style="margin-bottom:16px;">关于我们</h3>
+          <div id="aboutItems"></div>
+          <button class="btn btn-ghost" onclick="addAboutItem()" style="margin-top:12px;">+ 添加</button>
+        </div>
+
+        <!-- Communities -->
+        <div class="section-editor" id="editor-communities" style="display:none;">
+          <h3 style="margin-bottom:16px;">技术方向</h3>
+          <div id="communitiesItems"></div>
+          <button class="btn btn-ghost" onclick="addCommunitiesItem()" style="margin-top:12px;">+ 添加</button>
+        </div>
+
+        <!-- Events -->
+        <div class="section-editor" id="editor-events" style="display:none;">
+          <h3 style="margin-bottom:16px;">近期活动</h3>
+          <div id="eventsItems"></div>
+          <button class="btn btn-ghost" onclick="addEventsItem()" style="margin-top:12px;">+ 添加</button>
+        </div>
+
+        <!-- Friends -->
+        <div class="section-editor" id="editor-friends" style="display:none;">
+          <h3 style="margin-bottom:16px;">友情链接</h3>
+          <div id="friendsItems"></div>
+          <button class="btn btn-ghost" onclick="addFriendsItem()" style="margin-top:12px;">+ 添加</button>
+        </div>
+
+        <!-- Contact -->
+        <div class="section-editor" id="editor-contact" style="display:none;">
+          <h3 style="margin-bottom:16px;">联系方式</h3>
+          <div class="cfg-row"><label>QQ 群号</label><input id="cfg-qq" placeholder="123456789"></div>
+          <div class="cfg-row"><label>QQ 链接</label><input id="cfg-qqUrl" placeholder="https://qm.qq.com/q/xxx"></div>
+          <div class="cfg-row"><label>邮箱</label><input id="cfg-email" placeholder="jsucsa@example.com"></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="section-editor" id="editor-stats" style="display:none;">
+          <h3 style="margin-bottom:16px;">首页数字</h3>
+          <div class="cfg-row"><label>技术方向</label><input id="cfg-directions" type="number" placeholder="6"></div>
+          <div class="cfg-row"><label>社区成员</label><input id="cfg-members" type="number" placeholder="100"></div>
+          <div class="cfg-row"><label>技术分享</label><input id="cfg-articles" type="number" placeholder="50"></div>
+        </div>
+
+        <!-- Full JSON -->
+        <div class="section-editor" id="editor-all" style="display:block;">
+          <h3 style="margin-bottom:16px;">完整 JSON</h3>
+          <textarea id="siteJsonEditor" style="width:100%; min-height:500px; padding:16px; background:var(--card); border:1px solid var(--border); border-radius:10px; color:var(--text); font-family:var(--mono); font-size:0.85rem; line-height:1.7; resize:vertical; outline:none;"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .cfg-row { display:flex; gap:12px; align-items:center; margin-bottom:12px; }
+    .cfg-row label { min-width:80px; font-size:0.85rem; color:var(--muted); text-align:right; }
+    .cfg-row input { flex:1; padding:8px 12px; background:var(--card); border:1px solid var(--border); border-radius:6px; color:var(--text); font-size:0.85rem; font-family:var(--font); }
+    .cfg-row input:focus { outline:none; border-color:var(--blue); }
+    .cfg-item { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:12px; position:relative; }
+    .cfg-item .del-btn { position:absolute; top:8px; right:8px; background:none; border:none; color:var(--red); cursor:pointer; font-size:1rem; padding:4px 8px; border-radius:4px; }
+    .cfg-item .del-btn:hover { background:rgba(239,68,68,0.1); }
+    .cfg-item .item-row { display:flex; gap:10px; align-items:center; margin-bottom:8px; }
+    .cfg-item .item-row label { min-width:50px; font-size:0.78rem; color:var(--muted); }
+    .cfg-item .item-row input { flex:1; padding:6px 10px; background:var(--card); border:1px solid var(--border); border-radius:5px; color:var(--text); font-size:0.82rem; font-family:var(--font); }
+    .cfg-item .item-row input:focus { outline:none; border-color:var(--blue); }
+  </style>
 
   <!-- Status bar -->
   <div class="statusbar">
@@ -543,8 +639,223 @@
       }
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
-        savePost();
+        if (currentTab === 'site') saveSiteConfig();
+        else savePost();
       }
+    }
+
+    // ============================================
+    // Tab switching
+    // ============================================
+    let currentTab = 'blog';
+    let siteConfig = null;
+    let siteFileSha = null;
+    const SITE_CONFIG_PATH = 'source/data/site.json';
+
+    function switchTab(tab) {
+      currentTab = tab;
+      $('tabBlog').style.borderColor = tab === 'blog' ? 'var(--blue)' : 'var(--border)';
+      $('tabSite').style.borderColor = tab === 'site' ? 'var(--blue)' : 'var(--border)';
+
+      if (tab === 'blog') {
+        document.querySelector('.editor-wrap').style.display = 'flex';
+        $('siteEditor').style.display = 'none';
+        $('newBtn').style.display = '';
+        $('saveBtn').onclick = savePost;
+      } else {
+        document.querySelector('.editor-wrap').style.display = 'none';
+        $('siteEditor').style.display = 'block';
+        $('newBtn').style.display = 'none';
+        $('saveBtn').onclick = saveSiteConfig;
+        $('saveBtn').disabled = false;
+        if (!siteConfig) loadSiteConfig();
+      }
+    }
+
+    // ============================================
+    // Load site config
+    // ============================================
+    async function loadSiteConfig() {
+      setStatus('loading', '加载首页配置...');
+      try {
+        const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${SITE_CONFIG_PATH}?ref=${BRANCH}`, {
+          headers: token ? { Authorization: `token ${token}` } : {}
+        });
+        if (!res.ok) throw new Error('加载失败');
+        const data = await res.json();
+        siteFileSha = data.sha;
+        siteConfig = JSON.parse(decodeBase64(data.content));
+        renderSiteConfig();
+        setStatus('ok', '首页配置已加载');
+      } catch (err) {
+        setStatus('err', `加载失败: ${err.message}`);
+      }
+    }
+
+    function renderSiteConfig() {
+      // Full JSON editor
+      $('siteJsonEditor').value = JSON.stringify(siteConfig, null, 2);
+
+      // Structured editors
+      renderAboutEditor();
+      renderCommunitiesEditor();
+      renderEventsEditor();
+      renderFriendsEditor();
+      renderContactEditor();
+      renderStatsEditor();
+    }
+
+    // --- About ---
+    function renderAboutEditor() {
+      $('aboutItems').innerHTML = (siteConfig.about || []).map((item, i) => `
+        <div class="cfg-item">
+          <button class="del-btn" onclick="removeAboutItem(${i})">✕</button>
+          <div class="item-row"><label>图标</label><input value="${item.icon}" onchange="siteConfig.about[${i}].icon=this.value"></div>
+          <div class="item-row"><label>标题</label><input value="${item.title}" onchange="siteConfig.about[${i}].title=this.value"></div>
+          <div class="item-row"><label>描述</label><input value="${item.desc}" onchange="siteConfig.about[${i}].desc=this.value"></div>
+        </div>
+      `).join('');
+    }
+    function addAboutItem() { siteConfig.about = siteConfig.about || []; siteConfig.about.push({icon:'fas fa-star',title:'新方向',desc:'描述'}); renderAboutEditor(); }
+    function removeAboutItem(i) { siteConfig.about.splice(i, 1); renderAboutEditor(); }
+
+    // --- Communities ---
+    function renderCommunitiesEditor() {
+      $('communitiesItems').innerHTML = (siteConfig.communities || []).map((item, i) => `
+        <div class="cfg-item">
+          <button class="del-btn" onclick="removeCommunitiesItem(${i})">✕</button>
+          <div class="item-row"><label>图标</label><input value="${item.icon}" onchange="siteConfig.communities[${i}].icon=this.value"></div>
+          <div class="item-row"><label>标题</label><input value="${item.title}" onchange="siteConfig.communities[${i}].title=this.value"></div>
+          <div class="item-row"><label>描述</label><input value="${item.desc}" onchange="siteConfig.communities[${i}].desc=this.value"></div>
+        </div>
+      `).join('');
+    }
+    function addCommunitiesItem() { siteConfig.communities = siteConfig.communities || []; siteConfig.communities.push({icon:'fas fa-star',title:'新方向',desc:'描述'}); renderCommunitiesEditor(); }
+    function removeCommunitiesItem(i) { siteConfig.communities.splice(i, 1); renderCommunitiesEditor(); }
+
+    // --- Events ---
+    function renderEventsEditor() {
+      $('eventsItems').innerHTML = (siteConfig.events || []).map((item, i) => `
+        <div class="cfg-item">
+          <button class="del-btn" onclick="removeEventsItem(${i})">✕</button>
+          <div class="item-row"><label>标题</label><input value="${item.title}" onchange="siteConfig.events[${i}].title=this.value"></div>
+          <div class="item-row"><label>描述</label><input value="${item.desc}" onchange="siteConfig.events[${i}].desc=this.value"></div>
+          <div class="item-row"><label>标签</label><input value="${item.tag}" onchange="siteConfig.events[${i}].tag=this.value"></div>
+          <div class="item-row"><label>图标</label><input value="${item.tagIcon}" onchange="siteConfig.events[${i}].tagIcon=this.value"></div>
+          <div class="item-row"><label>链接</label><input value="${item.link || ''}" onchange="siteConfig.events[${i}].link=this.value"></div>
+        </div>
+      `).join('');
+    }
+    function addEventsItem() { siteConfig.events = siteConfig.events || []; siteConfig.events.push({title:'新活动',desc:'描述',tag:'标签',tagIcon:'fas fa-star',link:'/blog/'}); renderEventsEditor(); }
+    function removeEventsItem(i) { siteConfig.events.splice(i, 1); renderEventsEditor(); }
+
+    // --- Friends ---
+    function renderFriendsEditor() {
+      $('friendsItems').innerHTML = (siteConfig.friends || []).map((item, i) => `
+        <div class="cfg-item">
+          <button class="del-btn" onclick="removeFriendsItem(${i})">✕</button>
+          <div class="item-row"><label>Emoji</label><input value="${item.emoji}" onchange="siteConfig.friends[${i}].emoji=this.value"></div>
+          <div class="item-row"><label>标题</label><input value="${item.title}" onchange="siteConfig.friends[${i}].title=this.value"></div>
+          <div class="item-row"><label>描述</label><input value="${item.desc}" onchange="siteConfig.friends[${i}].desc=this.value"></div>
+          <div class="item-row"><label>链接</label><input value="${item.url}" onchange="siteConfig.friends[${i}].url=this.value"></div>
+        </div>
+      `).join('');
+    }
+    function addFriendsItem() { siteConfig.friends = siteConfig.friends || []; siteConfig.friends.push({emoji:'🔗',title:'友链名称',desc:'描述',url:'https://'}); renderFriendsEditor(); }
+    function removeFriendsItem(i) { siteConfig.friends.splice(i, 1); renderFriendsEditor(); }
+
+    // --- Contact ---
+    function renderContactEditor() {
+      const c = siteConfig.contact || {};
+      $('cfg-qq').value = c.qq || '';
+      $('cfg-qqUrl').value = c.qqUrl || '';
+      $('cfg-email').value = c.email || '';
+      $('cfg-qq').onchange = () => { siteConfig.contact = siteConfig.contact || {}; siteConfig.contact.qq = $('cfg-qq').value; };
+      $('cfg-qqUrl').onchange = () => { siteConfig.contact = siteConfig.contact || {}; siteConfig.contact.qqUrl = $('cfg-qqUrl').value; };
+      $('cfg-email').onchange = () => { siteConfig.contact = siteConfig.contact || {}; siteConfig.contact.email = $('cfg-email').value; };
+    }
+
+    // --- Stats ---
+    function renderStatsEditor() {
+      const s = siteConfig.stats || {};
+      $('cfg-directions').value = s.directions || 6;
+      $('cfg-members').value = s.members || 100;
+      $('cfg-articles').value = s.articles || 50;
+      $('cfg-directions').onchange = () => { siteConfig.stats = siteConfig.stats || {}; siteConfig.stats.directions = +$('cfg-directions').value; };
+      $('cfg-members').onchange = () => { siteConfig.stats = siteConfig.stats || {}; siteConfig.stats.members = +$('cfg-members').value; };
+      $('cfg-articles').onchange = () => { siteConfig.stats = siteConfig.stats || {}; siteConfig.stats.articles = +$('cfg-articles').value; };
+    }
+
+    // ============================================
+    // Show section
+    // ============================================
+    function showSection(sec) {
+      document.querySelectorAll('.section-editor').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('[id^="sec"]').forEach(el => el.style.borderColor = 'var(--border)');
+      if (sec === 'all') {
+        $('editor-all').style.display = 'block';
+        $('secAll').style.borderColor = 'var(--blue)';
+        // Sync JSON editor with current config
+        $('siteJsonEditor').value = JSON.stringify(siteConfig, null, 2);
+      } else {
+        $(`editor-${sec}`).style.display = 'block';
+        $(`sec${sec.charAt(0).toUpperCase() + sec.slice(1)}`).style.borderColor = 'var(--blue)';
+      }
+    }
+
+    // ============================================
+    // Save site config
+    // ============================================
+    async function saveSiteConfig() {
+      if (!token) {
+        $('tokenDialog').classList.remove('hidden');
+        return;
+      }
+
+      // If on full JSON tab, parse the editor
+      if ($('editor-all').style.display !== 'none') {
+        try {
+          siteConfig = JSON.parse($('siteJsonEditor').value);
+        } catch (err) {
+          showToast('❌ JSON 格式错误', 'error');
+          return;
+        }
+      }
+
+      setStatus('loading', '保存首页配置...');
+      $('saveBtn').disabled = true;
+
+      try {
+        const content = encodeBase64(JSON.stringify(siteConfig, null, 2));
+        const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${SITE_CONFIG_PATH}`, {
+          method: 'PUT',
+          headers: {
+            Authorization: `token ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: 'update: 首页配置',
+            content: content,
+            sha: siteFileSha,
+            branch: BRANCH,
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          siteFileSha = data.content.sha;
+          setStatus('ok', '首页配置已保存');
+          showToast('✅ 保存成功！部署中...', 'success');
+        } else {
+          const err = await res.json();
+          throw new Error(err.message);
+        }
+      } catch (err) {
+        setStatus('err', `保存失败: ${err.message}`);
+        showToast(`❌ ${err.message}`, 'error');
+      }
+
+      $('saveBtn').disabled = false;
     }
   </script>
 </body>
