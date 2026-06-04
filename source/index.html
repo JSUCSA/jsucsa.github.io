@@ -295,28 +295,44 @@
     .community-card p { color:var(--text-secondary); font-size:0.8rem; }
 
     /* ============ Events ============ */
-    .events-grid { display:grid; gap:12px; }
+    .events-grid { display:grid; gap:14px; }
     .event-card {
       display:flex; gap:20px; align-items:flex-start;
       background:var(--bg-card); border:1px solid var(--border);
       border-radius:16px; padding:24px 28px; transition:0.4s var(--ease);
-      backdrop-filter:blur(8px); cursor:pointer;
+      backdrop-filter:blur(8px);
     }
-    .event-card:hover { border-color:var(--border-hover); transform:translateX(4px); }
+    .event-card:hover { border-color:var(--border-hover); transform:translateY(-2px); }
     .event-date {
       display:flex; flex-direction:column; align-items:center; justify-content:center;
-      min-width:60px; padding:10px; border-radius:12px;
+      min-width:60px; padding:10px; border-radius:12px; flex-shrink:0;
       background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.1);
     }
     .event-date .m { font-size:0.68rem; font-weight:600; color:var(--green); letter-spacing:0.08em; text-transform:uppercase; }
     .event-date .d { font-size:1.3rem; font-weight:800; letter-spacing:-0.02em; }
+    .event-info { flex:1; min-width:0; }
     .event-info h3 { font-size:1rem; font-weight:700; margin-bottom:6px; letter-spacing:-0.02em; }
-    .event-info p { color:var(--text-secondary); font-size:0.85rem; margin-bottom:10px; }
+    .event-preview { color:var(--text-secondary); font-size:0.82rem; line-height:1.6; margin-bottom:14px; }
+    .event-bottom { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
     .event-tag {
       display:inline-flex; align-items:center; gap:5px;
       padding:3px 10px; border-radius:100px;
       background:rgba(6,182,212,0.08); font-size:0.72rem; font-weight:600; color:var(--cyan);
     }
+    .event-btns { display:flex; gap:8px; }
+    .event-btn {
+      padding:6px 14px; border-radius:8px; font-size:0.78rem; font-weight:600;
+      transition:0.25s var(--ease); display:inline-flex; align-items:center; gap:4px;
+    }
+    .event-btn.detail {
+      background:transparent; border:1px solid var(--border); color:var(--text-secondary);
+    }
+    .event-btn.detail:hover { border-color:var(--green); color:var(--green); }
+    .event-btn.signup {
+      background:var(--grad); color:#fff;
+      box-shadow:0 0 0 1px rgba(16,185,129,0.3);
+    }
+    .event-btn.signup:hover { box-shadow:0 0 0 1px rgba(16,185,129,0.6), 0 4px 16px rgba(16,185,129,0.2); transform:translateY(-1px); }
 
     /* ============ CTA ============ */
     .cta-section { padding:80px 0 120px; }
@@ -644,18 +660,48 @@
         <h2 class="sec-title">近期活动</h2>
         <p class="sec-desc">SRE 实战、Agent 工坊、CTF 训练。</p>
       </div>
-      <div class="events-grid fade-up">
-        <div class="event-card" onclick="window.open('/blog/tags/SRE/')">
+      <div class="events-grid fade-up" id="eventsGrid">
+        <div class="event-card">
           <div class="event-date"><span class="m">定期</span><span class="d">举办</span></div>
-          <div class="event-info"><h3>SRE 实战分享</h3><p>监控告警、故障排查、容量规划等核心主题。</p><span class="event-tag"><i class="fas fa-server"></i> SRE</span></div>
+          <div class="event-info">
+            <h3>SRE 实战分享</h3>
+            <p class="event-preview">监控告警、故障排查、容量规划等核心主题。面向有 Linux 基础的同学，每次 1-2 小时。</p>
+            <div class="event-bottom">
+              <span class="event-tag"><i class="fas fa-server"></i> SRE</span>
+              <div class="event-btns">
+                <a href="/blog/tags/SRE/" class="event-btn detail">详情 →</a>
+                <a href="https://github.com/JSUCSA/jsucsa.github.io/issues/new?title=报名：SRE实战分享&body=姓名：%0A联系方式：" target="_blank" class="event-btn signup">我要报名</a>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="event-card" onclick="window.open('/blog/tags/Agent/')">
+        <div class="event-card">
           <div class="event-date"><span class="m">定期</span><span class="d">举办</span></div>
-          <div class="event-info"><h3>Agent 开发工坊</h3><p>从 LLM 调用到智能体架构，动手构建 AI Agent。</p><span class="event-tag"><i class="fas fa-robot"></i> Agent</span></div>
+          <div class="event-info">
+            <h3>Agent 开发工坊</h3>
+            <p class="event-preview">从 LLM 调用到智能体架构，动手构建 AI Agent 应用。需要 Python 基础。</p>
+            <div class="event-bottom">
+              <span class="event-tag"><i class="fas fa-robot"></i> Agent</span>
+              <div class="event-btns">
+                <a href="/blog/tags/Agent/" class="event-btn detail">详情 →</a>
+                <a href="https://github.com/JSUCSA/jsucsa.github.io/issues/new?title=报名：Agent开发工坊&body=姓名：%0A联系方式：" target="_blank" class="event-btn signup">我要报名</a>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="event-card" onclick="window.open('/blog/tags/安全/')">
+        <div class="event-card">
           <div class="event-date"><span class="m">定期</span><span class="d">举办</span></div>
-          <div class="event-info"><h3>CTF 竞赛训练</h3><p>攻防演练、CTF 题目解析、组队参赛。</p><span class="event-tag"><i class="fas fa-flag"></i> CTF</span></div>
+          <div class="event-info">
+            <h3>CTF 竞赛训练</h3>
+            <p class="event-preview">攻防演练、CTF 题目解析、组队参赛。零基础可参加，从 Web 入门。</p>
+            <div class="event-bottom">
+              <span class="event-tag"><i class="fas fa-flag"></i> CTF</span>
+              <div class="event-btns">
+                <a href="/blog/tags/安全/" class="event-btn detail">详情 →</a>
+                <a href="https://github.com/JSUCSA/jsucsa.github.io/issues/new?title=报名：CTF竞赛训练&body=姓名：%0A联系方式：" target="_blank" class="event-btn signup">我要报名</a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -885,6 +931,34 @@
       document.querySelectorAll('a[href^="#"]').forEach(a => {
         a.addEventListener('click', e => { e.preventDefault(); document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior:'smooth' }); });
       });
+
+      // Dynamic events rendering
+      (async () => {
+        try {
+          const res = await fetch('/data/site.json?v=' + Date.now());
+          if (!res.ok) return;
+          const data = await res.json();
+          if (data.events) {
+            const grid = document.getElementById('eventsGrid');
+            if (grid) grid.innerHTML = data.events.map(e => `
+              <div class="event-card">
+                <div class="event-date"><span class="m">定期</span><span class="d">举办</span></div>
+                <div class="event-info">
+                  <h3>${e.title}</h3>
+                  <p class="event-preview">${e.preview || e.desc || ''}</p>
+                  <div class="event-bottom">
+                    <span class="event-tag"><i class="${e.tagIcon}"></i> ${e.tag}</span>
+                    <div class="event-btns">
+                      <a href="${e.link}" class="event-btn detail">详情 →</a>
+                      ${e.signup ? `<a href="${e.signup}" target="_blank" class="event-btn signup">我要报名</a>` : ''}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `).join('');
+          }
+        } catch {}
+      })();
 
       // 3D tilt on cards
       document.querySelectorAll('.about-card, .community-card, .friend-card').forEach(card => {

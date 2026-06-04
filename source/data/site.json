@@ -51,24 +51,27 @@
   "events": [
     {
       "title": "SRE 实战分享",
-      "desc": "系统可靠性工程实战经验分享，涵盖监控告警、故障排查、容量规划等核心主题。",
+      "preview": "监控告警、故障排查、容量规划等核心主题。面向有 Linux 基础的同学，每次 1-2 小时。",
       "tag": "SRE",
       "tagIcon": "fas fa-server",
-      "link": "/blog/tags/SRE/"
+      "link": "/blog/tags/SRE/",
+      "signup": "https://github.com/JSUCSA/jsucsa.github.io/issues/new?title=报名：SRE实战分享&body=姓名：%0A联系方式："
     },
     {
       "title": "Agent 开发工坊",
-      "desc": "从 LLM 调用到智能体架构，动手构建 AI Agent 应用，探索自动化新范式。",
+      "preview": "从 LLM 调用到智能体架构，动手构建 AI Agent 应用。需要 Python 基础。",
       "tag": "Agent",
       "tagIcon": "fas fa-robot",
-      "link": "/blog/tags/Agent/"
+      "link": "/blog/tags/Agent/",
+      "signup": "https://github.com/JSUCSA/jsucsa.github.io/issues/new?title=报名：Agent开发工坊&body=姓名：%0A联系方式："
     },
     {
       "title": "CTF 竞赛训练",
-      "desc": "网络安全攻防演练，CTF 题目解析与实战训练，组队参加各类安全竞赛。",
+      "preview": "攻防演练、CTF 题目解析、组队参赛。零基础可参加，从 Web 入门。",
       "tag": "CTF",
       "tagIcon": "fas fa-flag",
-      "link": "/blog/tags/安全/"
+      "link": "/blog/tags/安全/",
+      "signup": "https://github.com/JSUCSA/jsucsa.github.io/issues/new?title=报名：CTF竞赛训练&body=姓名：%0A联系方式："
     }
   ],
   "friends": [
