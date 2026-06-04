@@ -129,8 +129,8 @@
       justify-content:space-between; gap:48px;
       padding:120px 24px 80px; z-index:1; max-width:1100px; margin:0 auto;
     }
-    .hero-left { flex:1; min-width:0; }
-    .hero-right { flex:0 0 440px; max-width:440px; }
+    .hero-left { flex:1; min-width:0; text-align:left; }
+    .hero-right { flex:0 0 420px; max-width:420px; }
     .hero-badge {
       display:inline-flex; align-items:center; gap:8px;
       padding:6px 16px 6px 10px; border-radius:100px;
@@ -156,7 +156,7 @@
       font-size:1.1rem; color:var(--text-secondary); max-width:520px;
       line-height:1.8; margin-bottom:40px; letter-spacing:-0.01em;
     }
-    .hero-actions { display:flex; gap:12px; margin-bottom:56px; flex-wrap:wrap; justify-content:center; }
+    .hero-actions { display:flex; gap:12px; margin-bottom:56px; flex-wrap:wrap; }
 
     /* ============ Buttons ============ */
     .btn {
@@ -491,6 +491,7 @@
       .hero-right { flex:none; max-width:400px; width:100%; }
       .hero-stats { justify-content:center; }
       .hero-actions { justify-content:center; }
+      .hero-actions { justify-content:center; }
       .hero-title { font-size:clamp(2.5rem,6vw,4rem); }
       .about-grid { grid-template-columns:1fr; max-width:400px; margin:0 auto; }
       .communities-grid { grid-template-columns:1fr 1fr; }
@@ -568,7 +569,12 @@
         <a href="https://jsucsa.github.io/Lab-E-club/" class="btn btn-primary btn-lg" target="_blank">
           <i class="fas fa-arrow-right"></i> 加入社区
         </a>
-        <a href="/blog/" class="btn btn-outline btn-lg">阅读博客</a>
+        <a href="/blog/" class="btn btn-outline btn-lg">
+          <i class="fas fa-blog"></i> 阅读博客
+        </a>
+        <a href="https://github.com/JSUCSA" class="btn btn-ghost btn-lg" target="_blank">
+          <i class="fab fa-github"></i> GitHub
+        </a>
       </div>
       <div class="hero-stats">
         <div class="stat-item"><span class="stat-num" data-target="6">0</span><span class="stat-plus">+</span><span class="stat-label">技术方向</span></div>
